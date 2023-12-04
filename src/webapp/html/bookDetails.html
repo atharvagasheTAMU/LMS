@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Details</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header id="home" class="header">
+      <nav class="nav" role="navigation">
+        <div class="container nav-elements">
+          <ul class="navbar">
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="myBooks">My Books</a></li>
+            <li><a href="logout">Logout</a></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+    <div class="container mt-5">
+      <h2 class="mb-4">Book Details</h2>
+
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-4">
+              <img
+                src="book.png"
+                class="img-fluid"
+                alt="/images/book.png"
+                style="width: 128px; height: 128px"
+              />
+            </div>
+            <div class="col-md-8">
+              <h3 class="card-title" id="bookName"></h3>
+              <p class="card-text">
+                <strong>Author:</strong> <span id="authorName"></span>
+              </p>
+              <p class="card-text">
+                <strong>Genre:</strong> <span id="bookGenre"></span>
+              </p>
+              <p class="card-text">
+                <strong>Description:</strong> <span id="bookDescription"></span>
+              </p>
+            </div>
+            <form action="rentBook" method="post" id="rentForm">
+              <div class="form-group">
+                <label for="rentDays">Select Number of Days to Rent:</label>
+                <select
+                  class="form-control"
+                  id="rentDays"
+                  name="rentDays"
+                  required
+                >
+                  <option value="7">1 Week</option>
+                  <option value="14">2 Weeks</option>
+                  <option value="30">1 Month</option>
+                  <!-- Add more options as needed -->
+                </select>
+              </div>
+              <input type="hidden" name="bookId" id="bookId" value="" />
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="rentButton"
+                disabled
+              >
+                Rent Book
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js (Optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Your custom JavaScript -->
+    <script>
+      // Simulated data (replace with actual data)
+      document.addEventListener("DOMContentLoaded", function () {
+        // Function to extract a parameter from the URL
+        function getParameterByName(name, url) {
+          if (!url) url = window.location.href;
+          name = name.replace(/[\[\]]/g, "\\$&");
+          var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+          if (!results) return null;
+          if (!results[2]) return "";
+          return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+
+        // Get the book ID from the URL
+        var bookId = getParameterByName("bookId");
+
+        // Now, you have the book ID, and you can use it to fetch book details using AJAX/fetch
+        // You may want to replace the following alert with your logic to load and display book details.
+        //alert("Book ID: " + bookId);
+
+        // load book data from bookId.
+        var bookData = {
+          bookName: bookId,
+          authorName: "Author Name",
+          bookGenre: "Fiction",
+          bookDescription: "This is the book description.",
+        };
+        console.log(bookData);
+        setData(bookData);
+      });
+
+      // Function to set data in the HTML
+      function setData(bookData) {
+        document.getElementById("bookName").innerText = bookData.bookName;
+        document.getElementById("authorName").innerText = bookData.authorName;
+        document.getElementById("bookGenre").innerText = bookData.bookGenre;
+        document.getElementById("bookDescription").innerText =
+          bookData.bookDescription;
+
+        // Enable the rent button and set the bookId
+        document.getElementById("rentButton").removeAttribute("disabled");
+        document.getElementById("bookId").value = "123"; // Replace with the actual book ID
+      }
+    </script>
+  </body>
+</html>

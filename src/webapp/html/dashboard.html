@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Catalog</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header id="home" class="header">
+      <nav class="nav" role="navigation">
+        <div class="container nav-elements">
+          <ul class="navbar">
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="myBooks.html">My Books</a></li>
+            <li><a href="login.html">Logout</a></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container mt-5">
+      <!-- Success Message -->
+      <h4 id="successMessage" class="mb-4"></h4>
+
+      <!-- Search Bar and Radio Buttons -->
+      <div class="mb-4">
+        <!-- Form to submit search criteria to a servlet -->
+        <form id="searchForm" class="form-inline">
+          <div class="form-group mr-3">
+            <input
+              type="text"
+              class="form-control"
+              id="searchString"
+              placeholder="Search..."
+            />
+          </div>
+          <div class="form-group">
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="searchType"
+                id="searchByTitle"
+                value="book_name"
+                checked
+              />
+              <label class="form-check-label" for="searchByTitle"
+                >Search by Title</label
+              >
+            </div>
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="searchType"
+                id="searchByAuthor"
+                value="author_id"
+              />
+              <label class="form-check-label" for="searchByAuthor"
+                >Search by Author</label
+              >
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="searchBooks()">
+            Search
+          </button>
+        </form>
+
+        <!-- Membership Information -->
+        <div id="membershipInfo">
+          <br />
+          <p id="membershipType" class="mb-4"></p>
+          <p id="membershipEndDate" class="mb-4"></p>
+          <br />
+          <button
+            type="button"
+            class="btn btn-primary"
+            onclick="getMembership()"
+          >
+            Get a Membership
+          </button>
+        </div>
+      </div>
+
+      <h2 class="mb-4">Book Catalog</h2>
+      <div class="row" id="bookCatalog"></div>
+
+      <!-- Pagination -->
+      <ul id="pagination" class="pagination"></ul>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js (Optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Your custom JavaScript -->
+    <script>
+      // Simulated data (replace this with actual data from the server)
+      var sampleBooks = [
+        {
+          bookName: "Book 1",
+          authorName: "Author 1",
+          genre: "Genre 1",
+          bookId: 1,
+        },
+        {
+          bookName: "Book 2",
+          authorName: "Author 2",
+          genre: "Genre 2",
+          bookId: 2,
+        },
+        // Add more books as needed
+      ];
+
+      // Initial update with sample data
+      updateBookCatalog(sampleBooks);
+
+      // Simulated data (replace this with actual data from the server)
+      var sampleTotalPages = 12;
+      var sampleCurrentPage = 1;
+
+      // Initial update with sample data
+      updatePagination(sampleTotalPages, sampleCurrentPage);
+
+      function updatePagination(totalPages, currentPage) {
+        var pagination = document.getElementById("pagination");
+        pagination.innerHTML = ""; // Clear existing content
+
+        for (var pageNum = 1; pageNum <= totalPages; pageNum++) {
+          var li = document.createElement("li");
+          li.className =
+            "page-item " + (pageNum === currentPage ? "active" : "");
+
+          var a = document.createElement("a");
+          a.className = "page-link";
+          a.href = "?page=" + pageNum;
+          a.textContent = pageNum;
+
+          li.appendChild(a);
+          pagination.appendChild(li);
+        }
+      }
+
+      function updateBookCatalog(books) {
+        var bookCatalog = document.getElementById("bookCatalog");
+        bookCatalog.innerHTML = ""; // Clear existing content
+
+        books.forEach(function (book) {
+          var card = document.createElement("div");
+          card.className = "col-md-4 mb-4";
+          card.innerHTML = `
+                    <div class="card">
+                        <img src="book.png" class="card-img-top" alt="book.png" style="width: 128px; height: 128px;">
+                        <div class="card-body">
+                            <h5 class="card-title">${book.bookName}</h5>
+                            <p class="card-text"><strong>Author:</strong> ${book.authorName}</p>
+                            <p class="card-text"><strong>Genre:</strong> ${book.genre}</p>
+                            <a href="bookDetails.html?bookId=${book.bookId}" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                `;
+          bookCatalog.appendChild(card);
+        });
+      }
+
+      // Add your JavaScript code here for handling form submission and other interactions
+      function searchBooks() {
+        // Implement the logic for submitting the search form
+        // You can use JavaScript to fetch data from the server (e.g., using fetch or XMLHttpRequest)
+        // and update the UI accordingly.
+        var searchString = document.getElementById("searchString").value;
+        var searchType = document.querySelector(
+          'input[name="searchType"]:checked'
+        ).value;
+
+        // Use searchString and searchType in your server request logic
+        console.log("Search String:", searchString);
+        console.log("Search Type:", searchType);
+      }
+
+      function getMembership() {
+        // Implement the logic for getting a membership
+        // You can use JavaScript to make a request to the server and handle the response.
+      }
+
+      // Add any other functions or event listeners you may need
+    </script>
+  </body>
+</html>
