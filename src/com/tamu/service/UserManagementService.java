@@ -120,9 +120,7 @@ public class UserManagementService {
             if (existingUser != null) {
             	
 //            	if(existingUser.get)
-//            	int membershipTypeID = dataAdapter.loadMembershipType(0)
-//            	
-//            	
+//            	int membershipTypeID = dataAdapter.loadMembershipType(0)         	
 //				if (acceptsJson(requestMessageLine)) {
 					String jsonResponse = gson.toJson(existingUser);
 					sendJsonResponse(outToClient, jsonResponse);
