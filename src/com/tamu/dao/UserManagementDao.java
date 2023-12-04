@@ -1,4 +1,6 @@
 package com.tamu.dao;
+import java.util.Properties;
+
 import com.google.gson.Gson;
 import com.tamu.entity.Address;
 import com.tamu.entity.Book;
@@ -13,7 +15,12 @@ public class UserManagementDao {
 	private Gson gson;
 
 	public UserManagementDao() {
-		jedis = new Jedis("redis://default:WwyCVfKfto11N1c71IooaBUVLQIAd2yB@redis-14238.c309.us-east-2-1.ec2.cloud.redislabs.com:14238");
+		
+		Properties properties = Config.loadProperties();
+
+		String redisPort = properties.getProperty("redis.user.port");
+		String redisPassword = properties.getProperty("redis.user.password");
+		jedis = new Jedis("redis://default:"+ redisPassword+ "@redis-14238.c309.us-east-2-1.ec2.cloud.redislabs.com:" + redisPort);
 
         System.out.println("Reddis Connection successfull in UserManagementDao");
 		this.gson = new Gson();
