@@ -8,6 +8,20 @@ public class MembershipType {
 	private int validity;
 	private int numBooks;
 	private double price;
+	public MembershipType(int membershipTypeId, String type, int validity, int numBooks, double price) {
+		this.membershipTypeId = membershipTypeId;
+		this.type = type;
+		this.validity = validity;
+		this.numBooks = numBooks;
+		this.price = price;
+	}
+	MembershipType() {
+		this.membershipTypeId = 0;
+		this.type = "";
+		this.validity = 0;
+		this.numBooks = 0;
+		this.price = 0;
+	}
 	public int getMembershipId() {
 		return membershipTypeId;
 	}

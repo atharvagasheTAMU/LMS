@@ -44,7 +44,7 @@ public class BookManagementDao {
 
         // Initialize a list to store books
         List<Book> books = new ArrayList<Book>();
-        if (!books.isEmpty()) {
+        if (!bookKeys.isEmpty()) {
             for (String bookKey : bookKeys) {
                 // Retrieve the book data from Redis using GET
                 String bookJson = jedis.get(bookKey);
