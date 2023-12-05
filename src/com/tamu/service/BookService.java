@@ -82,6 +82,16 @@ public class BookService {
 					sendError(outToClient, "Book Not Found", 404);
 
 				}
+			} else if (httpMethod.equals("GET") && requestPath.startsWith("/book/search/")) {
+				List<Book> allBooks = dataAdapter.getAllBooks();
+				if (allBooks != null) {
+					String jsonResponse = gson.toJson(allBooks);
+					sendJsonResponse(outToClient, jsonResponse);
+				} else {
+
+					sendError(outToClient, "Book Not Found", 404);
+
+				}
 			} else {
 				sendError(outToClient, "Invalid request.", 400);
 			}
