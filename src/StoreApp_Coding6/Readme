@@ -1,0 +1,7 @@
+1. For the assignment reused the code that was submitted for the Coding2-Assignment.
+2. Created account in Redis Labs and MongoDB Atlas.
+3. New files created as RedisDataAdapter.java and MongoDBDataAdapter.java
+4. Application.java file modified to accomodate the new dataadapter file changes.
+5. Existing file DataAdapter.java and it's references has been removed(Not captured in video).
+6. RedisDataAdapter.java file has methods to perform load and store DB operation on users, products, credit cards, addresses classes.
+7. MongoDBDataAdapter.java file has methods to perform load and store DB operation on Order details and receipts of each order classes.
