@@ -15,7 +15,12 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 import com.tamu.dao.BookManagementDao;
+import com.tamu.dto.MembershipDto;
+import com.tamu.entity.Address;
 import com.tamu.entity.Book;
+import com.tamu.entity.Card;
+import com.tamu.entity.Membership;
+import com.tamu.entity.User;
 
 public class BookService {
 
@@ -82,7 +87,7 @@ public class BookService {
 					sendError(outToClient, "Book Not Found", 404);
 
 				}
-			} else if (httpMethod.equals("GET") && requestPath.startsWith("/book/search/")) {
+			} else if (httpMethod.equals("GET") && requestPath.startsWith("/book/search/all")) {
 				List<Book> allBooks = dataAdapter.getAllBooks();
 				if (allBooks != null) {
 					String jsonResponse = gson.toJson(allBooks);
@@ -92,6 +97,15 @@ public class BookService {
 					sendError(outToClient, "Book Not Found", 404);
 
 				}
+			} else if (httpMethod.equals("POST") && requestPath.equals("/book/addBook")) {
+				String contentLengthLine = headers.get("Content-Length");
+				int contentLength = Integer.parseInt(contentLengthLine.trim());
+				char[] bodyChars = new char[contentLength];
+				inFromClient.read(bodyChars);
+				String requestBody = new String(bodyChars);
+				addBook(requestBody, outToClient);
+				sendJsonResponse(outToClient, "Book Added Successfully");
+
 			} else {
 				sendError(outToClient, "Invalid request.", 400);
 			}
@@ -100,7 +114,6 @@ public class BookService {
 		}
 
 	}
-
 
 	private static void sendJsonResponse(DataOutputStream outToClient, String jsonResponse) throws IOException {
 		outToClient.writeBytes("HTTP/1.1 200 OK\r\n");
@@ -117,17 +130,19 @@ public class BookService {
 		outToClient.writeBytes(res);
 		outToClient.flush();
 	}
-    private static boolean containsUrlDecodedIgnoreCase(String source, String target) {
-        try {
-            String decodedSource = URLDecoder.decode(source, "UTF-8");
-            String decodedTarget = URLDecoder.decode(target, "UTF-8");
-            return decodedSource.toLowerCase().contains(decodedTarget.toLowerCase());
-        } catch (UnsupportedEncodingException e) {
-            // Handle the exception as needed
-            e.printStackTrace();
-            return false;
-        }
-    }
+
+	private static boolean containsUrlDecodedIgnoreCase(String source, String target) {
+		try {
+			String decodedSource = URLDecoder.decode(source, "UTF-8");
+			String decodedTarget = URLDecoder.decode(target, "UTF-8");
+			return decodedSource.toLowerCase().contains(decodedTarget.toLowerCase());
+		} catch (UnsupportedEncodingException e) {
+			// Handle the exception as needed
+			e.printStackTrace();
+			return false;
+		}
+	}
+
 	public static List<Book> searchBooksbyBookName(String searchTerm, List<Book> books) {
 		List<Book> result = new ArrayList<>();
 		for (Book book : books) {
@@ -149,5 +164,13 @@ public class BookService {
 
 		return result;
 	}
+	   private static void addBook(String requestBody, DataOutputStream outToClient) throws IOException {
+	       try {
+	           Book book = gson.fromJson(requestBody, Book.class);
+	           dataAdapter.saveBook(book);
+				} catch(Exception e) {
+					sendError(outToClient, "Error Creating Membership", 500);
+				}
+	       } 
 
 }

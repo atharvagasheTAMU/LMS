@@ -3,29 +3,23 @@ package com.tamu.entity;
 import java.util.Date;
 
 public class Membership {
-	private double membershipId;
-	private User user;
-	private MembershipType membershipType;
+	private int membershipId;
+	private int userId;
 	private Date startDate; 
 	private Date endDate;
-	public double getMembershipId() {
+	public int getMembershipId() {
 		return membershipId;
 	}
-	public void setMembershipId(double membershipId) {
+	public void setMembershipId(int membershipId) {
 		this.membershipId = membershipId;
 	}
-	public User getUser() {
-		return user;
+	public int getUserId() {
+		return userId;
 	}
-	public void setUser(User user) {
-		this.user = user;
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
-	public MembershipType getMembershipType() {
-		return membershipType;
-	}
-	public void setMembershipType(MembershipType membershipType) {
-		this.membershipType = membershipType;
-	}
+
 	public Date getStartDate() {
 		return startDate;
 	}

@@ -5,11 +5,20 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.gson.Gson;
 import com.tamu.dao.UserManagementDao;
+import com.tamu.dto.MembershipDto;
+import com.tamu.entity.Address;
+import com.tamu.entity.Book;
+import com.tamu.entity.Card;
+import com.tamu.entity.Membership;
+import com.tamu.entity.MembershipType;
 import com.tamu.entity.User;
 
 public class UserManagementService {
@@ -49,39 +58,39 @@ public class UserManagementService {
                 }
             }
             if (httpMethod.equals("POST") && requestPath.equals("/user/register")) {
-                String contentType = headers.get("Content-Type");
                 String contentLengthLine = headers.get("Content-Length");
-//                if (contentLengthLine != null) {
                     int contentLength = Integer.parseInt(contentLengthLine.trim());
                     char[] bodyChars = new char[contentLength];
                     inFromClient.read(bodyChars);
                     String requestBody = new String(bodyChars);
-//                    if ("application/json".equalsIgnoreCase(contentType)) {
                         registerUser(requestBody, outToClient);
-//                    } else {
-//                        sendError(outToClient, "Unsupported Media Type", 415);
-//                    }
-//                } else {
-//                    sendError(outToClient, "Bad Request: Missing content length.", 400);
-//                }
             }
             else if (httpMethod.equals("POST") && requestPath.equals("/user/login")) {
-                String contentType = headers.get("Content-Type");
                 String contentLengthLine = headers.get("Content-Length");
-//                if (contentLengthLine != null) {
                     int contentLength = Integer.parseInt(contentLengthLine.trim());
                     char[] bodyChars = new char[contentLength];
                     inFromClient.read(bodyChars);
                     String requestBody = new String(bodyChars);
-//                    if ("application/json".equalsIgnoreCase(contentType)) {
-                        loginUser(requestBody, outToClient, requestMessageLine);
-//                    }else {
-//                        sendError(outToClient, "Unsupported Media Type", 415);
-//                    }
-//                } else {
-//                    sendError(outToClient, "Bad Request: Missing content length.", 400);
-//                }
-            } else {
+                        loginUser(requestBody, outToClient);
+
+            }else if (httpMethod.equals("POST") && requestPath.equals("/user/membership")) {
+                String contentLengthLine = headers.get("Content-Length");
+                    int contentLength = Integer.parseInt(contentLengthLine.trim());
+                    char[] bodyChars = new char[contentLength];
+                    inFromClient.read(bodyChars);
+                    String requestBody = new String(bodyChars);
+                        createMembership(requestBody, outToClient);
+
+            } else if (httpMethod.equals("GET") && requestPath.startsWith("/user/membership/")) {
+				String userId = requestPath.substring("/user/membership/".length());
+				Membership membership = dataAdapter.getMembershipByUserId(Integer.parseInt(userId));
+				if (membership != null) {
+					String jsonResponse = gson.toJson(membership);
+					sendJsonResponse(outToClient, jsonResponse);
+				} else {
+					sendError(outToClient, "Membership Not Found", 404);
+				}
+			} else {
                 sendError(outToClient, "Invalid request.", 400);
             }
 
@@ -111,20 +120,14 @@ public class UserManagementService {
         }
     }
     
-    private static void loginUser(String requestBody, DataOutputStream outToClient, String requestMessageLine) throws IOException {
+    private static void loginUser(String requestBody, DataOutputStream outToClient) throws IOException {
         try {
             User loginAttempt = gson.fromJson(requestBody, User.class);
             System.out.println("Login Attempt: " + loginAttempt.getUsername() + ", " + loginAttempt.getPassword());
-
             User existingUser = dataAdapter.loadUser(loginAttempt.getUsername(), loginAttempt.getPassword());
-            if (existingUser != null) {
-            	
-//            	if(existingUser.get)
-//            	int membershipTypeID = dataAdapter.loadMembershipType(0)         	
-//				if (acceptsJson(requestMessageLine)) {
+            if (existingUser != null) {          
 					String jsonResponse = gson.toJson(existingUser);
 					sendJsonResponse(outToClient, jsonResponse);
-//				} 
 			} else {
 				sendError(outToClient, "Invalid username or password", 401);
 			}
@@ -132,8 +135,52 @@ public class UserManagementService {
             sendError(outToClient, "Bad Request: Error logging in", 400);
         }
     }
-    
-   
+    private static void createMembership(String requestBody, DataOutputStream outToClient) throws IOException {
+        try {
+            MembershipDto dto = gson.fromJson(requestBody, MembershipDto.class);
+            Address address = dto.getAddress();
+            dataAdapter.saveAddress(address);
+            Card card = dto.getCard();
+            dataAdapter.saveCard(card);
+            Membership membership = new Membership();
+            membership.setUserId((int)dto.getUser().getUserId());
+            Calendar calendar = Calendar.getInstance();
+            Date startDate = new Date(); // Current date as a java.util.Date
+            calendar.setTime(startDate);
+
+            calendar.add(Calendar.DAY_OF_MONTH, dto.getUser().getMembership().getValidity());
+
+            Date endDate = calendar.getTime();
+            membership.setStartDate(startDate);
+            membership.setEndDate(endDate);
+            int membershipId = dataAdapter.saveMembership(membership);
+            User user = dto.getUser();
+            user.setMembershipId(membershipId);
+            dataAdapter.updateUser(user);
+            String jsonResponse = gson.toJson(user);
+			sendJsonResponse(outToClient,jsonResponse);
+
+			} catch(Exception e) {
+				sendError(outToClient, "Error Creating Membership", 500);
+			}
+    }
+   private static void getMembership(String requestBody, DataOutputStream outToClient) throws IOException {
+       try {
+           MembershipDto dto = gson.fromJson(requestBody, MembershipDto.class);
+           Address address = dto.getAddress();
+           dataAdapter.saveAddress(address);
+           Card card = dto.getCard();
+           dataAdapter.saveCard(card);
+           Membership membership = new Membership();
+           membership.setUserId((int)dto.getUser().getUserId()); 
+           int membershipId = dataAdapter.saveMembership(membership);
+           User user = dto.getUser();
+           user.setMembershipId(membershipId);
+           dataAdapter.saveUser(user);
+			} catch(Exception e) {
+				sendError(outToClient, "Error Creating Membership", 500);
+			}
+       } 
     private static boolean acceptsJson(String requestMessageLine) throws IOException {
         while (requestMessageLine != null && !requestMessageLine.isEmpty()) {
             if (requestMessageLine.toLowerCase().startsWith("accept:")) {

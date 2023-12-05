@@ -1,4 +1,5 @@
 package com.tamu.entity;
+import org.bson.Document;
 
 public class Book {
 
@@ -60,7 +61,30 @@ public class Book {
 	public void setBookPrice(double bookPrice) {
 		this.bookPrice = bookPrice;
 	}
-	
+    public Document toDocument() {
+
+        return new Document("bookId", bookId)
+                .append("bookName", bookName)
+				.append("bookDescription", bookDescription)
+                .append("authorName", authorName)
+                .append("quantity", quantity)
+                .append("bookPrice", bookPrice)
+                .append("genre", genre)
+                .append("imageURL", imageURL);
+    }
+
+    public static Book fromDocument(Document document) {
+        Book book = new Book();
+        book.setBookId(document.getInteger("bookId"));
+        book.setBookName(document.getString("bookName"));
+        book.setBookDescription(document.getString("bookDescription"));
+        book.setAuthorName(document.getString("authorName"));
+        book.setBookPrice(document.getDouble("bookPrice"));
+        book.setQuantity(document.getInteger("quantity"));
+        book.setGenre(document.getString("genre"));
+        book.setImageURL(document.getString("imageURL"));
+        return book;
+    }
 	
 	
 }

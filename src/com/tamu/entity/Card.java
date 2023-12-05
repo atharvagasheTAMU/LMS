@@ -2,11 +2,11 @@ package com.tamu.entity;
 import java.util.Date;
 
 public class Card {
-	private double cardID;
-    public double getCardID() {
+	private int cardID;
+    public int getCardID() {
 		return cardID;
 	}
-	public void setCardID(double cardID) {
+	public void setCardID(int cardID) {
 		this.cardID = cardID;
 	}
 	private String cardNumber;

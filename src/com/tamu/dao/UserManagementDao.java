@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.tamu.entity.Address;
 import com.tamu.entity.Book;
 import com.tamu.entity.Card;
+import com.tamu.entity.Membership;
 import com.tamu.entity.MembershipType;
 import com.tamu.entity.User;
 
@@ -35,6 +36,14 @@ public class UserManagementDao {
 	}
 
 
+	public int saveMembership(Membership membership) {
+        int membershipId = jedis.incr("membershipID").intValue();
+        membership.setMembershipId(membershipId);
+        String addressJson = gson.toJson(membership);
+        jedis.set("membership:" + membership.getUserId(), addressJson);
+        return membershipId;
+	}
+
 	public int saveCard(Card card) {
 		int cardID = jedis.incr("cardID").intValue();;
         card.setCardID(cardID);
@@ -47,13 +56,21 @@ public class UserManagementDao {
 		int userID = jedis.incr("userID").intValue();;
 		user.setUserId(userID);
         String userJson = gson.toJson(user);
-        jedis.set("user:" + userID, userJson);
-        jedis.set("email:" + user.getEmail(), Double.toString(userID) );
-        jedis.set("username:" + user.getUsername(), Double.toString(userID));
+        jedis.set("user:" + Integer.toString(userID), userJson);
+        jedis.set("email:" + user.getEmail(), Integer.toString(userID) );
+        jedis.set("username:" + user.getUsername(), Integer.toString(userID));
 
         return true;
 	}
+	public boolean updateUser(User user) {
+		int userID = (int)user.getUserId();
+        String userJson = gson.toJson(user);
+        jedis.set("user:" + Integer.toString(userID), userJson);
+        jedis.set("email:" + user.getEmail(), Integer.toString(userID) );
+        jedis.set("username:" + user.getUsername(), Integer.toString(userID));
 
+        return true;
+	}
 
 	public User loadUser(String username, String password) {
         String userID = jedis.get("username:" + username);
@@ -72,6 +89,12 @@ public class UserManagementDao {
 		String bookJson = jedis.get("user:" + id);
         return bookJson != null ? gson.fromJson(bookJson, User.class) : null;
 	}
+	
+	public Membership getMembershipByUserId(int id) {
+		String membership = jedis.get("membership:" + id);
+        return membership != null ? gson.fromJson(membership, Membership.class) : null;
+	}
+	
 	public boolean isEmailTaken(String email) {
             String jsonUser = jedis.get("email:" + email);
             return jsonUser != null;
@@ -85,4 +108,5 @@ public class UserManagementDao {
 		String membershipTypeJson = jedis.get("membership_type:" + id);
         return membershipTypeJson != null ? gson.fromJson(membershipTypeJson, MembershipType.class) : null;
 	}
+	
 }

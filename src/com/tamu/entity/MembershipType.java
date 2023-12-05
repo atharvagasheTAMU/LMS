@@ -1,16 +1,18 @@
 package com.tamu.entity;
 
+import org.bson.Document;
+
 public class MembershipType {
-	private double membershipId;
+	private int membershipTypeId;
 	private String type;
 	private int validity;
 	private int numBooks;
 	private double price;
-	public double getMembershipId() {
-		return membershipId;
+	public int getMembershipId() {
+		return membershipTypeId;
 	}
-	public void setMembershipId(double membershipId) {
-		this.membershipId = membershipId;
+	public void setMembershipId(int membershipId) {
+		this.membershipTypeId = membershipId;
 	}
 	public double getPrice() {
 		return price;
@@ -36,5 +38,21 @@ public class MembershipType {
 	public void setNumBooks(int numBooks) {
 		this.numBooks = numBooks;
 	}
-	
+    public Document toDocument() {
+        return new Document("membershipTypeId", membershipTypeId)
+                .append("type", type)
+                .append("numBooks", numBooks)
+                .append("validity", validity)
+                .append("price", price);
+    }
+
+    public static MembershipType fromDocument(Document document) {
+        MembershipType membershipType = new MembershipType();
+        membershipType.setMembershipId(document.getInteger("membershipTypeId"));
+        membershipType.setType(document.getString("type"));
+        membershipType.setNumBooks(document.getInteger("numBooks"));
+        membershipType.setValidity(document.getInteger("subscriptionValidity"));
+        membershipType.setPrice(document.getDouble("price"));
+        return membershipType;
+    }
 }

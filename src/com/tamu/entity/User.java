@@ -1,7 +1,9 @@
 package com.tamu.entity;
 
+import org.bson.Document;
+
 public class User {
-	private double userId;
+	private int userId;
 	private String password;
 	private String username;
 	private String firstName;
@@ -9,7 +11,8 @@ public class User {
 	private int age;
 	private String email;
 	private String activity;
-	private MembershipType membership;
+	private MembershipType membershipType;
+	private int membershipId;
 	public String getEmail() {
 		return email;
 	}
@@ -18,19 +21,19 @@ public class User {
 	}
 
 	public MembershipType getMembership() {
-		return membership;
+		return membershipType;
 	}
 	public void setMembership(MembershipType membership) {
-		this.membership = membership;
+		this.membershipType = membership;
 	}
 	public double getUserId() {
 		return userId;
 	}
-	public void setUserId(double userId) {
+	public void setUserId(int userId) {
 		this.userId = userId;
 	}
 
-	public User(double userId,  String username, String password,  String firstName, String lastName, int age,
+	public User(int userId,  String username, String password,  String firstName, String lastName, int age,
 			String activity, String email) {
 		super();
 		this.userId = userId;
@@ -82,7 +85,37 @@ public class User {
 	public void setActivity(String activity) {
 		this.activity = activity;
 	}
-	
+    public Document toDocument() {
+        return new Document("userId", userId)
+                .append("password", password)
+                .append("username", username)
+                .append("firstName", firstName)
+                .append("lastName", lastName)
+                .append("age", age)
+                .append("email", email)
+                .append("activity", activity)
+                .append("membershipId", membershipId);
+    }
+
+    public static User fromDocument(Document document) {
+        User user = new User();
+        user.setUserId(document.getInteger("userId"));
+        user.setPassword(document.getString("password"));
+        user.setUsername(document.getString("username"));
+        user.setFirstName(document.getString("firstName"));
+        user.setLastName(document.getString("lastName"));
+        user.setAge(document.getInteger("age"));
+        user.setEmail(document.getString("email"));
+        user.setActivity(document.getString("activity"));
+        user.setMembershipId(document.getInteger("membershipId"));
+        return user;
+    }
+	public int getMembershipId() {
+		return membershipId;
+	}
+	public void setMembershipId(int membershipId) {
+		this.membershipId = membershipId;
+	}
 	
 
 }
