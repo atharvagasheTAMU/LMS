@@ -40,22 +40,24 @@ public class BookManagementDao {
 	}
     public List<Book> getAllBooks() {
         // Get all keys that represent books
-        Set<String> bookKeys = jedis.keys("book" + "*");
+        Set<String> bookKeys = jedis.keys("book:" + "*");
 
         // Initialize a list to store books
         List<Book> books = new ArrayList<Book>();
+        if (!books.isEmpty()) {
+            for (String bookKey : bookKeys) {
+                // Retrieve the book data from Redis using GET
+                String bookJson = jedis.get(bookKey);
 
-        // Retrieve each book by key
-        for (String bookKey : bookKeys) {
-            // Retrieve the book data from Redis using GET
-            String bookJson = jedis.get(bookKey);
+                // Convert the JSON string back to a Book object and add to the list
+                Book book = gson.fromJson(bookJson, Book.class);
+                books.add(book);
+            }
 
-            // Convert the JSON string back to a Book object and add to the list
-            Book book = gson.fromJson(bookJson, Book.class);
-            books.add(book);
+            return books;
         }
-
-        return books;
+        // Retrieve each book by key
+        return null;
     }
 	
 
