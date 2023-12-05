@@ -8,17 +8,14 @@ import java.net.Socket;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.google.gson.Gson;
 import com.tamu.dao.UserManagementDao;
 import com.tamu.dto.MembershipDto;
 import com.tamu.entity.Address;
-import com.tamu.entity.Book;
 import com.tamu.entity.Card;
 import com.tamu.entity.Membership;
-import com.tamu.entity.MembershipType;
 import com.tamu.entity.User;
 
 public class UserManagementService {
@@ -164,33 +161,6 @@ public class UserManagementService {
 				sendError(outToClient, "Error Creating Membership", 500);
 			}
     }
-   private static void getMembership(String requestBody, DataOutputStream outToClient) throws IOException {
-       try {
-           MembershipDto dto = gson.fromJson(requestBody, MembershipDto.class);
-           Address address = dto.getAddress();
-           dataAdapter.saveAddress(address);
-           Card card = dto.getCard();
-           dataAdapter.saveCard(card);
-           Membership membership = new Membership();
-           membership.setUserId((int)dto.getUser().getUserId()); 
-           int membershipId = dataAdapter.saveMembership(membership);
-           User user = dto.getUser();
-           user.setMembershipId(membershipId);
-           dataAdapter.saveUser(user);
-			} catch(Exception e) {
-				sendError(outToClient, "Error Creating Membership", 500);
-			}
-       } 
-    private static boolean acceptsJson(String requestMessageLine) throws IOException {
-        while (requestMessageLine != null && !requestMessageLine.isEmpty()) {
-            if (requestMessageLine.toLowerCase().startsWith("accept:")) {
-                return requestMessageLine.contains("application/json");
-            }
-            return false;
-        }
-        return false;
-    }
-
     private static void sendJsonResponse(DataOutputStream outToClient, String jsonResponse) throws IOException {
         outToClient.writeBytes("HTTP/1.1 200 OK\r\n");
         outToClient.writeBytes("Content-Type: application/json\r\n");
