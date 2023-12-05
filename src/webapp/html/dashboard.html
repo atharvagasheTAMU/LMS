@@ -101,7 +101,23 @@
 
     <!-- Your custom JavaScript -->
     <script>
-      // Simulated data (replace this with actual data from the server)
+      function getMembership() {}
+
+      // Your existing JavaScript code
+
+      // You can call this function when the page loads to disable the button if needed
+      function onLoad() {
+        var membershipBooks = localStorage.getItem("membershipBooks");
+        var membershipButton = document.querySelector("#membershipInfo button");
+
+        if (membershipBooks !== null) {
+          membershipButton.disabled = true;
+        }
+      }
+
+      // Call the onLoad function when the page loads
+      window.onload = onLoad;
+
       var sampleBooks = [
         {
           bookName: "Book 1",
@@ -115,18 +131,71 @@
           genre: "Genre 2",
           bookId: 2,
         },
+        {
+          bookName: "Book 2",
+          authorName: "Author 2",
+          genre: "Genre 2",
+          bookId: 2,
+        },
+        {
+          bookName: "Book 2",
+          authorName: "Author 2",
+          genre: "Genre 2",
+          bookId: 2,
+        },
+        {
+          bookName: "Book 2",
+          authorName: "Author 2",
+          genre: "Genre 2",
+          bookId: 2,
+        },
+        {
+          bookName: "Book 2",
+          authorName: "Author 2",
+          genre: "Genre 2",
+          bookId: 2,
+        },
+        {
+          bookName: "Book 2",
+          authorName: "Author 2",
+          genre: "Genre 2",
+          bookId: 2,
+        },
+        {
+          bookName: "Book 2",
+          authorName: "Author 2",
+          genre: "Genre 2",
+          bookId: 2,
+        },
+        {
+          bookName: "Book 2",
+          authorName: "Author 2",
+          genre: "Genre 2",
+          bookId: 2,
+        },
+        {
+          bookName: "Book 2",
+          authorName: "Author 2",
+          genre: "Genre 2",
+          bookId: 2,
+        },
+        {
+          bookName: "Book 2",
+          authorName: "Author 2",
+          genre: "Genre 2",
+          bookId: 2,
+        },
         // Add more books as needed
       ];
+      // Assuming totalBooks is the total number of books from the server
+      var totalBooks = sampleBooks.length;
+      var booksPerPage = 6;
+      var totalPages = Math.ceil(totalBooks / booksPerPage);
+      var currentPage = 1;
 
       // Initial update with sample data
-      updateBookCatalog(sampleBooks);
-
-      // Simulated data (replace this with actual data from the server)
-      var sampleTotalPages = 12;
-      var sampleCurrentPage = 1;
-
-      // Initial update with sample data
-      updatePagination(sampleTotalPages, sampleCurrentPage);
+      updateBookCatalog(getBooksForPage(sampleBooks, currentPage));
+      updatePagination(totalPages, currentPage);
 
       function updatePagination(totalPages, currentPage) {
         var pagination = document.getElementById("pagination");
@@ -139,12 +208,30 @@
 
           var a = document.createElement("a");
           a.className = "page-link";
-          a.href = "?page=" + pageNum;
+          a.href = "javascript:void(0);"; // Using javascript:void(0); to prevent the page from reloading
           a.textContent = pageNum;
+          (function (pageNum) {
+            a.onclick = function () {
+              onPageClick(pageNum);
+            };
+          })(pageNum);
 
           li.appendChild(a);
           pagination.appendChild(li);
         }
+      }
+
+      function onPageClick(pageNum) {
+        currentPage = pageNum;
+        console.log("Page num: " + currentPage);
+        updateBookCatalog(getBooksForPage(sampleBooks, currentPage));
+        updatePagination(totalPages, currentPage);
+      }
+
+      function getBooksForPage(allBooks, page) {
+        var startIndex = (page - 1) * booksPerPage;
+        var endIndex = startIndex + booksPerPage;
+        return allBooks.slice(startIndex, endIndex);
       }
 
       function updateBookCatalog(books) {
@@ -155,41 +242,21 @@
           var card = document.createElement("div");
           card.className = "col-md-4 mb-4";
           card.innerHTML = `
-                    <div class="card">
-                        <img src="book.png" class="card-img-top" alt="book.png" style="width: 128px; height: 128px;">
-                        <div class="card-body">
-                            <h5 class="card-title">${book.bookName}</h5>
-                            <p class="card-text"><strong>Author:</strong> ${book.authorName}</p>
-                            <p class="card-text"><strong>Genre:</strong> ${book.genre}</p>
-                            <a href="bookDetails.html?bookId=${book.bookId}" class="btn btn-primary">View Details</a>
-                        </div>
-                    </div>
-                `;
+                      <div class="card">
+                          <img src="book.png" class="card-img-top" alt="book.png" style="width: 128px; height: 128px;">
+                          <div class="card-body">
+                              <h5 class="card-title">${book.bookName}</h5>
+                              <p class="card-text"><strong>Author:</strong> ${book.authorName}</p>
+                              <p class="card-text"><strong>Genre:</strong> ${book.genre}</p>
+                              <a href="bookDetails.html?bookId=${book.bookId}" class="btn btn-primary">View Details</a>
+                          </div>
+                      </div>
+                  `;
           bookCatalog.appendChild(card);
         });
       }
 
-      // Add your JavaScript code here for handling form submission and other interactions
-      function searchBooks() {
-        // Implement the logic for submitting the search form
-        // You can use JavaScript to fetch data from the server (e.g., using fetch or XMLHttpRequest)
-        // and update the UI accordingly.
-        var searchString = document.getElementById("searchString").value;
-        var searchType = document.querySelector(
-          'input[name="searchType"]:checked'
-        ).value;
-
-        // Use searchString and searchType in your server request logic
-        console.log("Search String:", searchString);
-        console.log("Search Type:", searchType);
-      }
-
-      function getMembership() {
-        // Implement the logic for getting a membership
-        // You can use JavaScript to make a request to the server and handle the response.
-      }
-
-      // Add any other functions or event listeners you may need
+      // ... (your existing functions and script) ...
     </script>
   </body>
 </html>
