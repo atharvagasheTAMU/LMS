@@ -8,9 +8,11 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.client.model.Sorts;
 import com.tamu.dto.MyBookDto;
+import com.tamu.entity.Book;
 import com.tamu.entity.Subscription;
 
 import org.bson.Document;
