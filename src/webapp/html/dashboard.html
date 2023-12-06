@@ -106,7 +106,9 @@
       var booksPerPage = 6;
       var totalPages;
       var currentPage = 1;
-      function getMembership() {}
+      function getMembership() {
+        window.location.href = "membership.html";
+      }
 
       // Call the onLoad function when the page loads
       window.onload = onLoad;
@@ -116,7 +118,9 @@
         var membershipBooks = localStorage.getItem("membershipBooks");
         var membershipButton = document.querySelector("#membershipInfo button");
 
-        if (membershipBooks !== null) {
+        var currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+        if (currentUser.membershipType != null) {
           membershipButton.disabled = true;
         }
 
