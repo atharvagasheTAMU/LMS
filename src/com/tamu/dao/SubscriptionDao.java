@@ -32,7 +32,6 @@ public class SubscriptionDao {
 
 	private MongoClient mongoClient = null;
 	private static String conStr;
-	Gson gson = new Gson();
 
 	public void connect(String str) {
 
@@ -48,70 +47,58 @@ public class SubscriptionDao {
 	}
 
 	public void insertSubscription(Subscription subscription) {
-		try {
-			this.connect(conStr);
-			MongoDatabase database = mongoClient.getDatabase("csce606"); // Replace with your database name
-			MongoCollection<Document> subscriptionsCollection = database.getCollection("subscriptions");
+		this.connect(conStr);
+		MongoDatabase database = mongoClient.getDatabase("csce606"); // Replace with your database name
+		MongoCollection<Document> subscriptionsCollection = database.getCollection("subscriptions");
 
-			subscriptionsCollection.insertOne(subscription.toDocument());
-		} catch (Exception e) {
-			System.out.println("Error!!!");
+		subscriptionsCollection.insertOne(subscription.toDocument());
+	}
+
+	public List<MyBookDto> getSubscription(String username) {
+		this.connect(conStr);
+
+		MongoDatabase database = mongoClient.getDatabase("csce606"); // Replace with your database name
+		MongoCollection<Document> subscriptionsCollection = database.getCollection("subscriptions");
+
+		FindIterable<Document> result = subscriptionsCollection.find(
+				Filters.and(
+						Filters.eq("user.username", username),
+						Filters.eq("isReturned", 0)))
+				.sort(Sorts.descending("orderDate"));
+
+		List<MyBookDto> subscriptions = new ArrayList<>();
+		for (Document doc : result) {
+			subscriptions.add(mapDocumentToMyBookDto(doc));
 		}
+
+		return subscriptions;
 
 	}
 
-	public List<MyBookDto> getSubscription(int userId) {
-		try {
-			this.connect(conStr);
-			MongoDatabase database = mongoClient.getDatabase("csce606"); // Replace with your database name
-			MongoCollection<Document> subscriptionsCollection = database.getCollection("subscriptions");
-			
-			int count =  (int) subscriptionsCollection
-					.countDocuments(Filters.and(Filters.eq("user.userId", userId), Filters.eq("isReturned", 0)));
-			
-			FindIterable<Document> result = subscriptionsCollection
-					.find(Filters.and(Filters.eq("user.userId", userId), Filters.eq("isReturned", 0))) .projection(Projections.excludeId());;
-					
-
-			List<MyBookDto> subscriptions = new ArrayList<>();
-			for (Document doc : result) {
-				 Subscription subscription = gson.fromJson(doc.toJson(), Subscription.class);
-				    subscriptions.add(mapDocumentToMyBookDto(subscription));
-			}
-
-			return subscriptions;
-		} catch (Exception e) {
-			System.out.println("Error!!");
-		}
-		return null;
-	}
-
-	private MyBookDto mapDocumentToMyBookDto(Subscription subscription) {
+	private MyBookDto mapDocumentToMyBookDto(Document document) {
 		MyBookDto myBookDto = new MyBookDto();
-		myBookDto.setBookId(subscription.getBook().getBookId());
-		myBookDto.setBookName(subscription.getBook().getBookName());
-		myBookDto.setBookDescription(subscription.getBook().getBookDescription());
-		myBookDto.setAuthorName(subscription.getBook().getAuthorName());
-		myBookDto.setBookPrice(subscription.getBook().getBookPrice());
-		myBookDto.setQuantity(subscription.getBook().getQuantity());
-		myBookDto.setGenre(subscription.getBook().getGenre());
-		myBookDto.setImageURL("");
-		myBookDto.setOrderDate(subscription.getOrderDate().toString());
-		myBookDto.setDueDate(subscription.getDueDate().toString());
+		myBookDto.setBookId(document.getInteger("bookId"));
+		myBookDto.setBookName(document.getString("bookName"));
+		myBookDto.setBookDescription(document.getString("bookDescription"));
+		myBookDto.setAuthorName(document.getString("authorName"));
+		myBookDto.setBookPrice(document.getDouble("bookPrice"));
+		myBookDto.setQuantity(document.getInteger("quantity"));
+		myBookDto.setGenre(document.getString("genre"));
+		myBookDto.setImageURL(document.getString("imageURL"));
+		myBookDto.setOrderDate(document.getString("orderDate"));
+		myBookDto.setDueDate(document.getString("dueDate"));
 		return myBookDto;
 	}
 
 	public int getSubscriptionsByUserId(int userId) {
-		try {
-			this.connect(conStr);
-			MongoDatabase database = mongoClient.getDatabase("csce606"); // Replace with your database name
-			MongoCollection<Document> subscriptionsCollection = database.getCollection("subscriptions");
+		this.connect(conStr);
+		MongoDatabase database = mongoClient.getDatabase("csce606"); // Replace with your database name
+		MongoCollection<Document> subscriptionsCollection = database.getCollection("subscriptions");
 
-			return (int) subscriptionsCollection
-					.countDocuments(Filters.and(Filters.eq("user.userId", userId), Filters.eq("isReturned", 0)));
-		} catch (Exception e) {
-			System.out.println("Error");
-		}
-		return 0;
+		return (int) subscriptionsCollection.countDocuments(
+				Filters.and(
+						Filters.eq("user.userId", userId),
+						Filters.eq("isReturned", 0)));
+
 	}
 }

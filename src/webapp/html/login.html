@@ -64,6 +64,15 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+      // document.addEventListener("DOMContentLoaded", function () {
+      //   localStorage.setItem("userId", null);
+      //   localStorage.setItem("membershipBooks", null);
+      // });
+      // window.onload = onLoad;
+      // function onLoad() {
+      //   localStorage.setItem("userId", null);
+      // }
+
       function submitForm() {
         var username = document.getElementById("username").value;
         var password = document.getElementById("password").value;
@@ -82,10 +91,6 @@
             if (data.error == null) {
               console.log(data);
               localStorage.setItem("userId", data.userId);
-              localStorage.setItem(
-                "membershipBooks",
-                data.membershipType.numBooks
-              );
               window.location.href = "dashboard.html";
             } else alert(data.error);
           })
