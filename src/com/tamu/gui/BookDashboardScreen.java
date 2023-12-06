@@ -157,7 +157,7 @@ public class BookDashboardScreen extends JFrame implements ActionListener {
                  try {
                      // Update sampleBooks with search results
                      sampleBooks = Application.getInstance().getDataAdapter().getBooks(
-                             (searchByTitle ? "title" : "author"), searchTerm);
+                             (searchByTitle ? "bookName" : "authorName"), searchTerm);
                      currentPage = 0; // Reset to the first page
                      updateBookPanel();
                  } catch (UnknownHostException ex) {
