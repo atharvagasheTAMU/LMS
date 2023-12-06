@@ -72,10 +72,8 @@ public class RemoteDataAdapter{
     	String path = "/user/register";
 		connect();
 		String responseBody = doRESTCall(httpMethod, path, requestBody);
-		
-        String response = gson.fromJson(responseBody, String.class);
-        disconnect();
-    	return response;
+	    disconnect();
+    	return responseBody;
     }
     public String addBook(String requestBody) throws UnknownHostException, IOException {
     	String httpMethod = "POST";

@@ -15,18 +15,21 @@ public class TestAdapter {
 		User user = new User();
 	    Gson gson = new Gson();
 
-		user.setUsername("john_doe");
-		user.setPassword("password13");
+		user.setUsername("atharva_a");
+		user.setPassword("password123");
+		user.setAge(3);
+		user.setEmail("abcd123@gmail.com");
 		RemoteDataAdapter adapter = new RemoteDataAdapter();
 		String body = gson.toJson(user);
 		User loggedinUser=null ;
 		List<Book> sampleBooks= new ArrayList<Book>();
+		String res ="";
 		try {
-			sampleBooks = adapter.getBooks("bookName","The");
+			 res  = adapter.register(body);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println(gson.toJson(sampleBooks));
+		System.out.println(res);
 	}
 	
 }
