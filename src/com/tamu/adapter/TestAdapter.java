@@ -15,10 +15,10 @@ public class TestAdapter {
 		User user = new User();
 	    Gson gson = new Gson();
 
-		user.setUsername("atharva_a");
+		user.setUsername("atharv_a");
 		user.setPassword("password123");
 		user.setAge(3);
-		user.setEmail("abcd123@gmail.com");
+		user.setEmail("abcd23@gmail.com");
 		RemoteDataAdapter adapter = new RemoteDataAdapter();
 		String body = gson.toJson(user);
 		User loggedinUser=null ;
