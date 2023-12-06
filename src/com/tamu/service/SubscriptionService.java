@@ -22,8 +22,11 @@ public class SubscriptionService {
 
 	public static void main(String args[]) throws Exception {
 		int myPort = 8083; // Change the port as needed
+		ServiceRegistry.registerService("subscription_service", myPort);
+		System.out.println("Subscription Service is registered with the Service Registry.");
+
 		ServerSocket listenSocket = new ServerSocket(myPort);
-		System.out.println("User Management service waiting for request on port " + myPort);
+		System.out.println("Subscription service waiting for request on port " + myPort);
 		dataAdapter = new SubscriptionDao();
 
 		while (true) {
@@ -75,34 +78,31 @@ public class SubscriptionService {
 				} else {
 					sendError(outToClient, "Book Not Found", 404);
 				}
-			}
-			else if (httpMethod.equals("GET") && requestPath.startsWith("/subscription/userId/")) {
+			} else if (httpMethod.equals("GET") && requestPath.startsWith("/subscription/userId/")) {
 				String userId = requestPath.substring("/subscription/userId/".length());
 				int allBooks = dataAdapter.getSubscriptionsByUserId(Integer.parseInt(userId));
 				sendJsonResponse(outToClient, gson.toJson(allBooks));
-			} 
-			else {
+			} else {
 				sendError(outToClient, "Invalid request.", 400);
 			}
 
 			connectionSocket.close();
 		}
 	}
-    private static void subscribe(String requestBody, DataOutputStream outToClient) throws IOException {
-        try {
-            Gson gson = new GsonBuilder()
-                    .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                    .create();
-        	Subscription subscription = gson.fromJson(requestBody, Subscription.class);
 
-            dataAdapter.insertSubscription(subscription);
-            sendJsonResponse(outToClient, "Subscribed Successfully");
+	private static void subscribe(String requestBody, DataOutputStream outToClient) throws IOException {
+		try {
+			Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
+			Subscription subscription = gson.fromJson(requestBody, Subscription.class);
 
-        }catch(Exception e) {
-            sendError(outToClient, "Error Subscribing", 500);
+			dataAdapter.insertSubscription(subscription);
+			sendJsonResponse(outToClient, "Subscribed Successfully");
 
-        }
-    }
+		} catch (Exception e) {
+			sendError(outToClient, "Error Subscribing", 500);
+
+		}
+	}
 
 	private static boolean acceptsJson(String requestMessageLine) throws IOException {
 		while (requestMessageLine != null && !requestMessageLine.isEmpty()) {

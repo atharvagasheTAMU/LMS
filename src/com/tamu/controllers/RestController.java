@@ -21,8 +21,9 @@ public class RestController {
 
 	private static final int PORT = 8080;
 	private static final String HOST = "localhost";
-	private static final String USER_MANAGEMENT_SERVICE = "user-management-service";
-	private static final String BOOK_SERVICE = "book-service";
+	private static final String USER_MANAGEMENT_SERVICE = "user_management_service";
+	private static final String BOOK_SERVICE = "book_service";
+	private static final String SUBSCRIPTION_SERVICE = "subscription_service";
 
 	public static void main(String[] args) throws IOException {
 		ServerSocket serverSocket = new ServerSocket(PORT);
@@ -38,9 +39,9 @@ public class RestController {
 		try {
 			BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
 			DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
-			final int BOOK_SERVICE_PORT = 8082;
-			final int SUBSCRIPTION_SERVICE_PORT = 8083;
-			final int USER_MANAGEMENT_SERVICE_PORT = 8081;
+			final int BOOK_SERVICE_PORT = ServiceRegistry.getServicePort(BOOK_SERVICE);
+			final int SUBSCRIPTION_SERVICE_PORT = ServiceRegistry.getServicePort(SUBSCRIPTION_SERVICE);
+			final int USER_MANAGEMENT_SERVICE_PORT = ServiceRegistry.getServicePort(USER_MANAGEMENT_SERVICE);
 			String requestMessageLine = inFromClient.readLine();
 
 			if (requestMessageLine == null) {

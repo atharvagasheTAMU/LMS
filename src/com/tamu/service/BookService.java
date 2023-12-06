@@ -25,7 +25,7 @@ import com.tamu.entity.User;
 public class BookService {
 
 	private static final int PORT = 8082;
-	private static final String SERVICE_NAME = "book-service";
+	private static final String SERVICE_NAME = "book_service";
 	private static final Gson gson = new Gson();
 	private static BookManagementDao dataAdapter = null;
 
