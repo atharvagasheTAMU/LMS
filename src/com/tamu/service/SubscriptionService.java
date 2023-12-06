@@ -22,7 +22,6 @@ public class SubscriptionService {
 
 	public static void main(String args[]) throws Exception {
 		int myPort = 8083; // Change the port as needed
-
 		ServerSocket listenSocket = new ServerSocket(myPort);
 		System.out.println("User Management service waiting for request on port " + myPort);
 		dataAdapter = new SubscriptionDao();
@@ -67,9 +66,9 @@ public class SubscriptionService {
 //	                } else {
 //	                    sendError(outToClient, "Bad Request: Missing content length.", 400);
 //	                }
-			} else if (httpMethod.equals("GET") && requestPath.equals("/subscription/books/username/")) {
-				String username = requestPath.substring("/subscription/books/username/".length());
-				List<MyBookDto> allBooks = dataAdapter.getSubscription(username);
+			} else if (httpMethod.equals("GET") && requestPath.startsWith("/subscription/books/userId/")) {
+				String userId = requestPath.substring("/subscription/books/userId/".length());
+				List<MyBookDto> allBooks = dataAdapter.getSubscription(Integer.parseInt(userId));
 				if (allBooks != null) {
 					String jsonResponse = gson.toJson(allBooks);
 					sendJsonResponse(outToClient, jsonResponse);
@@ -77,10 +76,10 @@ public class SubscriptionService {
 					sendError(outToClient, "Book Not Found", 404);
 				}
 			}
-			else if (httpMethod.equals("GET") && requestPath.equals("/subscription/userId/")) {
+			else if (httpMethod.equals("GET") && requestPath.startsWith("/subscription/userId/")) {
 				String userId = requestPath.substring("/subscription/userId/".length());
 				int allBooks = dataAdapter.getSubscriptionsByUserId(Integer.parseInt(userId));
-				sendJsonResponse(outToClient, userId);
+				sendJsonResponse(outToClient, gson.toJson(allBooks));
 			} 
 			else {
 				sendError(outToClient, "Invalid request.", 400);

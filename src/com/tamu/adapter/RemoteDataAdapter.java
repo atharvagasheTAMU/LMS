@@ -100,7 +100,7 @@ public class RemoteDataAdapter{
     }
     public List<Book> getBooks(String type, String searchString) throws UnknownHostException, IOException {
     	String httpMethod = "GET";
-    	String path = "/book/search" + type+ "/" + searchString;
+    	String path = "/book/search/" + type+ "/" + searchString;
 		connect();
 		String responseBody = doRESTCall(httpMethod, path, "");
 		Type bookListType = new TypeToken<List<Book>>(){}.getType();

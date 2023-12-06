@@ -22,9 +22,8 @@ public class TestAdapter {
 		User loggedinUser=null ;
 		List<Book> sampleBooks= new ArrayList<Book>();
 		try {
-			sampleBooks = adapter.getBooks();
+			sampleBooks = adapter.getBooks("bookName","The");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		System.out.println(gson.toJson(sampleBooks));
