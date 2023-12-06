@@ -35,7 +35,7 @@
                     class="form-check-input"
                     name="selectedMembershipTypeId"
                     value="1"
-                    id="membership2"
+                    id="membership1"
                   />
                   <label class="form-check-label" for="membership2"
                     >Select</label
@@ -45,6 +45,8 @@
               </div>
             </div>
           </div>
+
+          <!-- Membership 2 -->
 
           <div class="col-md-4">
             <div class="card mb-4">
@@ -63,7 +65,7 @@
                     class="form-check-input"
                     name="selectedMembershipTypeId"
                     value="2"
-                    id="membership1"
+                    id="membership2"
                   />
                   <label class="form-check-label" for="membership1"
                     >Select</label
@@ -74,7 +76,7 @@
             </div>
           </div>
 
-          <!-- Membership 2 -->
+          <!-- Membership 3 -->
 
           <div class="col-md-4">
             <div class="card mb-4">
@@ -93,7 +95,7 @@
                     class="form-check-input"
                     name="selectedMembershipTypeId"
                     value="3"
-                    id="membership2"
+                    id="membership3"
                   />
                   <label class="form-check-label" for="membership2"
                     >Select</label
@@ -257,6 +259,31 @@
 
     <!-- Your custom JavaScript -->
     <script>
+      var memberships = [
+        {
+          membershipTypeId: 1,
+          type: "Silver Membership",
+          numBooks: 3,
+          validity: 30,
+          price: 10.99,
+        },
+        {
+          membershipTypeId: 2,
+          type: "Gold Membership",
+          numBooks: 3,
+          validity: 90,
+          price: 28.99,
+        },
+        {
+          membershipTypeId: 3,
+          type: "Platinum Membership",
+          numBooks: 4,
+          validity: 365,
+          price: 99.99,
+        },
+        // Add more memberships as needed
+      ];
+
       function submitMembership() {
         // Create an object to store form field values
         var membershipData = {
@@ -276,34 +303,70 @@
           cvv: document.getElementById("cvv").value,
         };
 
-        console.log(membershipData);
+        var address = {
+          lineOne: document.getElementById("lineOne").value,
+          city: document.getElementById("city").value,
+          state: document.getElementById("state").value,
+          zip: document.getElementById("zip").value,
+          country: document.getElementById("country").value,
+          contact: document.getElementById("contact").value,
+        };
+
+        var card = {
+          cardNumber: document.getElementById("cardNumber").value,
+          cardName: document.getElementById("cardName").value,
+          startDate: document.getElementById("startDate").value,
+          endDate: document.getElementById("endDate").value,
+          cvv: document.getElementById("cvv").value,
+        };
+
+        var currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+        var selectedMembership = memberships.find(
+          (membership) =>
+            membership.membershipTypeId ===
+            parseInt(membershipData.selectedMembershipTypeId, 10)
+        );
+
+        var user = {
+          userId: currentUser.userId,
+          password: currentUser.password,
+          username: currentUser.username,
+          firstName: currentUser.firstName,
+          lastName: currentUser.lastName,
+          age: currentUser.age,
+          email: currentUser.email,
+          activity: currentUser.activity,
+          membershipType: {
+            membershipTypeId: membershipData.membershipTypeId,
+            type: selectedMembership.type,
+            numBooks: selectedMembership.numBooks,
+            validity: selectedMembership.validity,
+            price: selectedMembership.price,
+          },
+        };
+
+        var api_object = {
+          address: address,
+          card: card,
+          user: user,
+        };
+
+        console.log(api_object);
 
         //POST request using fetch
-        fetch("/your-server-endpoint", {
+        fetch("http://127.0.0.1:8080/user/membership", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             // Add any other headers as needed
           },
-          body: JSON.stringify(membershipData),
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("Network response was not ok");
-            }
-            return response.json();
-          })
-          .then((data) => {
-            // Handle the response from the server
-            console.log("Server response:", data);
-            // Add any further logic based on the server response
-          })
-          .catch((error) => {
-            console.error(
-              "There was a problem with the fetch operation:",
-              error
-            );
+          body: JSON.stringify(api_object),
+        }).then((response) => {
+          response.json().then((data) => {
+            console.log(data);
           });
+        });
       }
     </script>
   </body>
