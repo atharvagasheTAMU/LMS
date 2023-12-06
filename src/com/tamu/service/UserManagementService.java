@@ -26,7 +26,7 @@ public class UserManagementService {
     public static void main(String args[]) throws Exception {
         int myPort = 8081; // Change the port as needed
 		ServiceRegistry.registerService("user_management_service", myPort);
-		System.out.println("User Management  is registered with the Service Registry.");
+		System.out.println("User Management Service is registered with the Service Registry.");
 
         ServerSocket listenSocket = new ServerSocket(myPort);
         System.out.println("User Management service waiting for request on port " + myPort);

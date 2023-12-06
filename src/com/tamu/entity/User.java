@@ -26,7 +26,7 @@ public class User {
 	public void setMembership(MembershipType membership) {
 		this.membershipType = membership;
 	}
-	public double getUserId() {
+	public int getUserId() {
 		return userId;
 	}
 	public void setUserId(int userId) {

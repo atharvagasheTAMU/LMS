@@ -1,11 +1,18 @@
 package com.tamu.gui;
 import javax.swing.*;
 
+import com.google.gson.Gson;
+import com.tamu.dto.MembershipDto;
+import com.tamu.entity.Address;
+import com.tamu.entity.Card;
+import com.tamu.entity.Membership;
 import com.tamu.entity.MembershipType;
+import com.tamu.entity.User;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,12 +36,20 @@ public class MembershipScreen extends JFrame implements ActionListener {
     private JTextField txtStartDate = new JTextField(20);
     private JTextField txtEndDate = new JTextField(20);
     private JTextField txtCvv = new JTextField(20);
+    private JButton btnBack = new JButton("Back");
 
     private JButton btnSelectMembership = new JButton("Add Membership");
 
-    public MembershipScreen(List<MembershipType> memberships) {
-        this.memberships = memberships;
+    public MembershipScreen() {
+    	
+        this.memberships = Application.getInstance().getDataAdapter().retrieveMemberships();
 
+//        SET membership_type:1 '{"membershipTypeId": 1, "type": "Silver Membership", "numBooks": 3, "validity": 30, "price": 10.99}'
+//
+//        SET membership_type:2 '{"membershipTypeId": 2, "type": "Gold Membership", "numBooks": 3, "validity": 90, "price": 28.99}'
+//
+//        SET membership_type:3 '{"membershipTypeId": 3, "type": "Platinum Membership", "numBooks": 4, "validity": 365, "price": 99.99}'
+        
         this.setTitle("Membership Selection");
         this.setSize(600, 500);
         this.setLayout(new BorderLayout());
@@ -45,9 +60,9 @@ public class MembershipScreen extends JFrame implements ActionListener {
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // Populate the membership dropdown with type names
-        cmbMemberships.addItem("Gold");
-        cmbMemberships.addItem("Silver");
-        cmbMemberships.addItem("Bronze");
+        cmbMemberships.addItem("Platinum Membership");
+        cmbMemberships.addItem("Gold Membership");
+        cmbMemberships.addItem("Silver Membership");
 
         mainPanel.add(createLabelAndComponent("Select Membership:", cmbMemberships));
         mainPanel.add(createLabelAndComponent("Address Line 1:", txtLineOne));
@@ -69,12 +84,14 @@ public class MembershipScreen extends JFrame implements ActionListener {
         mainPanel.add(createLabelAndComponent("CVV:", txtCvv));
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.add(btnBack);
         buttonPanel.add(btnSelectMembership);
 
         this.add(mainPanel, BorderLayout.CENTER);
         this.add(buttonPanel, BorderLayout.SOUTH);
 
         btnSelectMembership.addActionListener(this);
+        btnBack.addActionListener(this);
     }
 
     private JPanel createLabelAndComponent(String labelText, JComponent component) {
@@ -90,12 +107,71 @@ public class MembershipScreen extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnSelectMembership) {
             // Retrieve selected membership details
-            String selectedMembershipType = (String) cmbMemberships.getSelectedItem();
-            MembershipType selectedMembership = findMembershipByType(selectedMembershipType);
-            int validity = selectedMembership.getValidity();
+        	String cardNumber = txtCardNumber.getText();
+        	String cardName = txtCardName.getText();
+        	Date startDate = parseDate(txtStartDate.getText()); // You will need to write a method to parse the date from String
+        	Date endDate = parseDate(txtEndDate.getText()); // Similarly, a method to parse this date
+        	String cvv = txtCvv.getText();
 
-            // Rest of the code remains unchanged
-            // ...
+        	Card newCard = new Card();
+        	newCard.setCardNumber(cardNumber);
+        	newCard.setCardName(cardName);
+        	newCard.setStartDate(startDate);
+        	newCard.setEndDate(endDate);
+        	newCard.setCvv(cvv);
+
+        	// Creating a new Address object
+        	String lineOne = txtLineOne.getText();
+        	String city = txtCity.getText();
+        	String state = txtState.getText();
+        	String zip = txtZip.getText();
+        	String country = txtCountry.getText();
+        	String contact = txtContact.getText();
+
+        	Address newAddress = new Address();
+        	newAddress.setLineOne(lineOne);
+        	newAddress.setCity(city);
+        	newAddress.setState(state);
+        	newAddress.setZip(zip);
+        	newAddress.setCountry(country);
+        	newAddress.setContact(contact);
+        	
+        	User user = Application.getInstance().getCurrentUser();
+        	
+        	newAddress.setUserId(user.getUserId());
+        	newCard.setUserId(user.getUserId());
+        	
+            String selectedMembershipType = (String) cmbMemberships.getSelectedItem();
+            
+            
+            MembershipType selectedMembership = findMembershipByType(selectedMembershipType);
+            
+            user.setMembership(selectedMembership);        
+            
+            MembershipDto dto= new MembershipDto();
+            dto.setAddress(newAddress);
+            dto.setCard(newCard);
+            dto.setUser(user);
+            Gson gson = new Gson();
+            User updatedUser = null;
+            try {
+            	updatedUser = Application.getInstance().getDataAdapter().createMembership(gson.toJson(dto));
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+            if (updatedUser != null) {
+            	Application.getInstance().setCurrentUser(updatedUser);
+            }
+        }
+        else if (e.getSource() == btnBack) {
+            try {
+            	BookDashboardScreen bookDashboardScreen = new BookDashboardScreen();
+                setVisible(false);
+                bookDashboardScreen.setVisible(true);            	
+            }catch (IOException ex) {
+    		    ex.printStackTrace();
+    		}
         }
     }
 
@@ -111,20 +187,19 @@ public class MembershipScreen extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            List<MembershipType> memberships = retrieveMembershipsFromDatabase();
-            MembershipScreen membershipScreen = new MembershipScreen(memberships);
+            List<MembershipType> memberships = Application.getInstance().getDataAdapter().retrieveMemberships();
+            MembershipScreen membershipScreen = new MembershipScreen();
             membershipScreen.setVisible(true);
         });
     }
-
-    private static List<MembershipType> retrieveMembershipsFromDatabase() {
-        // Replace this with your logic to retrieve memberships from the database
-        // For simplicity, creating sample memberships
-        List<MembershipType> memberships = List.of(
-                new MembershipType(1, "Gold", 365, 100, 50.0),
-                new MembershipType(2, "Silver", 180, 75, 40.0),
-                new MembershipType(3, "Bronze", 90, 50, 30.0)
-        );
-        return memberships;
+    public static Date parseDate(String dateString) {
+        SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
+        try {
+            return formatter.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null; // Or handle the error as appropriate
+        }
     }
+
 }

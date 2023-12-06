@@ -2,6 +2,7 @@ package com.tamu.gui;
 import javax.swing.*;
 
 import com.tamu.entity.Book;
+import com.tamu.entity.MembershipType;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -16,18 +17,22 @@ public class BookDashboardScreen extends JFrame implements ActionListener {
     private JRadioButton radioTitle = new JRadioButton("Search by Title");
     private JRadioButton radioAuthor = new JRadioButton("Search by Author");
     private JButton btnSearch = new JButton("Search");
+    private JButton btnGetMembership = new JButton("Get Membership");
 
     // Sample books
     private List<Book> sampleBooks;
+    private JPanel panelBooks;
+    private int currentPage = 0;
+    private int pageSize = 6;
 
     public BookDashboardScreen() throws UnknownHostException, IOException {
         this.setTitle("Book Dashboard");
         this.setLayout(new BorderLayout());
         this.setSize(800, 600);
-        
+
         sampleBooks = Application.getInstance().getDataAdapter().getBooks();
-        // Sample data for books
-        // Panel for search and buttons
+
+        // Panel for search components
         JPanel panelSearch = new JPanel();
         panelSearch.add(new JLabel("Search Term:"));
         panelSearch.add(txtSearchTerm);
@@ -38,16 +43,57 @@ public class BookDashboardScreen extends JFrame implements ActionListener {
         ButtonGroup group = new ButtonGroup();
         group.add(radioTitle);
         group.add(radioAuthor);
-        this.add(panelSearch, BorderLayout.NORTH);
 
-        // Panel for displaying books in a 2x3 grid
-        
-        JPanel panelBooks = new JPanel(new GridLayout(2, 3, 10, 10));
-        for (Book book : sampleBooks) {
-            panelBooks.add(createBookPanel(book));
-        }
+        // Panel for 'Get Membership' button
+        JPanel panelButtons = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panelButtons.add(btnGetMembership);
+        btnGetMembership.addActionListener(this);
+        updateMembershipButton();
+
+        // Combine search and button panels
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.add(panelSearch, BorderLayout.NORTH);
+        topPanel.add(panelButtons, BorderLayout.CENTER);
+
+        // Panel for book display
+        panelBooks = new JPanel(new GridLayout(2, 3, 10, 10));
+        updateBookPanel();
         JScrollPane scrollPane = new JScrollPane(panelBooks);
-        this.add(scrollPane, BorderLayout.CENTER);
+
+        // Combine all panels in the main layout
+        this.add(topPanel, BorderLayout.NORTH);
+        this.add(panelBooks, BorderLayout.CENTER);
+        
+        JButton btnPrevPage = new JButton("Previous Page");
+        JButton btnNextPage = new JButton("Next Page");
+
+        JPanel paginationPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        paginationPanel.add(btnPrevPage);
+        paginationPanel.add(btnNextPage);
+
+        this.add(paginationPanel, BorderLayout.SOUTH);
+
+        // Add action listeners for pagination buttons
+        btnPrevPage.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (currentPage > 0) {
+                    currentPage--;
+                    updateBookPanel();
+                }
+            }
+        });
+
+        btnNextPage.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int maxPage = (int) Math.ceil((double) sampleBooks.size() / pageSize);
+                if (currentPage < maxPage - 1) {
+                    currentPage++;
+                    updateBookPanel();
+                }
+            }
+        });
     }
 
 
@@ -79,23 +125,55 @@ public class BookDashboardScreen extends JFrame implements ActionListener {
         return bookPanel;
     }
 
+    private void updateMembershipButton() {
+        boolean userHasMembership = Application.getInstance().getCurrentUser().getMembershipId() != 0;
+        btnGetMembership.setVisible(!userHasMembership);
+        btnGetMembership.setEnabled(!userHasMembership);
+    }
+    
+    private void updateBookPanel() {
+        panelBooks.removeAll(); // Clear existing books
 
+        int startIndex = currentPage * pageSize;
+        int endIndex = Math.min(startIndex + pageSize, sampleBooks.size());
 
-    public void actionPerformed(ActionEvent e) {
-        // Handle the search action if needed
+        for (int i = startIndex; i < endIndex; i++) {
+            Book book = sampleBooks.get(i);
+            book.setImageURL("src/images/book.png");
+            panelBooks.add(createBookPanel(book));
+        }
+
+        panelBooks.revalidate();
+        panelBooks.repaint();
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-					new BookDashboardScreen().setVisible(true);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-            }
-        });
+    public void actionPerformed(ActionEvent e) {
+    	if (e.getSource() == btnSearch) {
+    		 String searchTerm = txtSearchTerm.getText();
+             boolean searchByTitle = radioTitle.isSelected();
+             boolean searchByAuthor = radioAuthor.isSelected();
+
+             if (!searchTerm.isEmpty() && (searchByTitle || searchByAuthor)) {
+                 try {
+                     // Update sampleBooks with search results
+                     sampleBooks = Application.getInstance().getDataAdapter().getBooks(
+                             (searchByTitle ? "title" : "author"), searchTerm);
+                     currentPage = 0; // Reset to the first page
+                     updateBookPanel();
+                 } catch (UnknownHostException ex) {
+                     ex.printStackTrace();
+                 } catch (IOException ex) {
+                     ex.printStackTrace();
+                 }
+             } else {
+                 // Handle the case where search criteria are not provided
+                 JOptionPane.showMessageDialog(this, "Please enter search term and select search criteria.",
+                         "Invalid Search", JOptionPane.ERROR_MESSAGE);
+             }
+        } else if (e.getSource() == btnGetMembership) {
+            MembershipScreen membershipScreen = new MembershipScreen();
+            setVisible(false);
+            membershipScreen.setVisible(true);
+        }
     }
 }

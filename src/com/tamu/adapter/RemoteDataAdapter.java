@@ -2,6 +2,7 @@ package com.tamu.adapter;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.tamu.entity.Book;
+import com.tamu.entity.MembershipType;
 import com.tamu.entity.User;
 
 import java.io.BufferedReader;
@@ -106,6 +107,14 @@ public class RemoteDataAdapter{
         disconnect();
     	return response;
     }
+    public  List<MembershipType> retrieveMemberships() {
+    	List<MembershipType> memberships = List.of(
+                new MembershipType(3, "Platinum Membership", 365, 4, 99.99),
+                new MembershipType(2, "Gold Membership", 90, 3, 28.99),
+                new MembershipType(1, "Silver Member", 30, 3, 10.99)
+        );
+        return memberships;
+    }
         
 	private  String doRESTCall(String httpMethod, String path, String requestBody) {
 		try {
@@ -192,4 +201,5 @@ public class RemoteDataAdapter{
 		}
 		return null;
 	}
+
 }
