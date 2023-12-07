@@ -2,7 +2,7 @@ package com.tamu.entity;
 
 public class Address {
 	private int addressId;
-
+	private int userId;
 	private String lineOne;
 	private String city;
 	private String state;
@@ -11,6 +11,12 @@ public class Address {
 	private String contact;
 	public String getContact() {
 		return contact;
+	}
+	public int getUserId() {
+		return userId;
+	}
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
 	public void setContact(String contact) {
 		this.contact = contact;
@@ -45,6 +51,9 @@ public class Address {
 		this.zip = zip;
 		this.country = country;
 		this.contact = contact;
+	}
+	public Address() {
+		// TODO Auto-generated constructor stub
 	}
 	public void setZip(String zip) {
 		this.zip = zip;

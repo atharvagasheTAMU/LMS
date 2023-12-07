@@ -1,10 +1,17 @@
 package com.tamu.dto;
 
 public class MyBookDto {
+	private int subscriptionId;
 	private int bookId;
 	private String bookName;
 	private String bookDescription;
 	private String authorName;
+	public int getSubscriptionId() {
+		return subscriptionId;
+	}
+	public void setSubscriptionId(int subscriptionId) {
+		this.subscriptionId = subscriptionId;
+	}
 	private double bookPrice;
 	private int quantity;
 	private String genre;

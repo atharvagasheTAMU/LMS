@@ -22,7 +22,6 @@ public class Application {
     }
 
     private RemoteDataAdapter adapter;
-//    private MongoDBDataAdapter mongoDBDataAdapter;
 
     private User currentUser = null;
 
@@ -51,8 +50,4 @@ public class Application {
     public RemoteDataAdapter getDataAdapter() {
         return adapter;
     }
-//
-//    public MongoDBDataAdapter getMongoDBDataAdapter() {
-//        return mongoDBDataAdapter;
-//    }
 }

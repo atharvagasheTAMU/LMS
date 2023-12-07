@@ -82,6 +82,15 @@ public class SubscriptionService {
 				String userId = requestPath.substring("/subscription/userId/".length());
 				int allBooks = dataAdapter.getSubscriptionsByUserId(Integer.parseInt(userId));
 				sendJsonResponse(outToClient, gson.toJson(allBooks));
+			} else if (httpMethod.equals("GET") && requestPath.startsWith("/subscription/unsubscribe/")) {
+				String subscriptionId = requestPath.substring("/subscription/unsubscribe/".length());
+				boolean returne = dataAdapter.unsubscribe(Integer.parseInt(subscriptionId));
+				if(returne) {
+					sendJsonResponse(outToClient, "Unsubscribed Successfully");
+				}
+				else {
+					sendError(outToClient, "Error in unsubscribing", 500);
+				}
 			} else {
 				sendError(outToClient, "Invalid request.", 400);
 			}

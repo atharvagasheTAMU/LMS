@@ -1,8 +1,13 @@
 package com.tamu.gui;
 import javax.swing.*;
+
+import com.google.gson.Gson;
+import com.tamu.entity.User;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class RegistrationScreen extends JFrame implements ActionListener {
     private JTextField txtUsername = new JTextField(20);
@@ -13,6 +18,7 @@ public class RegistrationScreen extends JFrame implements ActionListener {
     private JTextField txtActivity = new JTextField(20);
     private JTextField txtEmail = new JTextField(20);
     private JButton btnRegister = new JButton("Register");
+    Gson gson = new Gson();
 
     public RegistrationScreen() {
         this.setTitle("User Registration");
@@ -53,17 +59,29 @@ public class RegistrationScreen extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnRegister) {
-            // Perform registration logic here
-            // For simplicity, let's assume registration is successful
-            // You may want to validate input and interact with your backend
-
-            // Show success message
-            JOptionPane.showMessageDialog(this, "Registration Successful!");
-
-            // Hide the registration screen
+        	User newUser = new User();
+            newUser.setUsername(txtUsername.getText().trim());
+            newUser.setPassword(txtPassword.getText().trim());
+            newUser.setFirstName(txtFirstName.getText().trim());
+            newUser.setLastName(txtLastName.getText().trim());
+            newUser.setAge(Integer.parseInt((txtAge.getText().trim())));;
+            newUser.setActivity(txtActivity.getText().trim());
+            newUser.setEmail(txtEmail.getText().trim());
+            String userBody = gson.toJson(newUser);
+            try {
+                String registeredUser = Application.getInstance().getDataAdapter().register(userBody);
+                if (registeredUser == "User Registered Successfully") {
+                    JOptionPane.showMessageDialog(null, "Registration failed. Please try again.");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Registration successful!");
+                    this.setVisible(false);
+                    LoginScreen loginScreen = new LoginScreen();
+                    loginScreen.setVisible(true);
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
             this.setVisible(false);
-
-            // Show the login screen
             LoginScreen loginScreen = new LoginScreen();
             loginScreen.setVisible(true);
         }

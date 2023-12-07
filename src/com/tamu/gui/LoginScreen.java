@@ -1,13 +1,19 @@
 package com.tamu.gui;
 import javax.swing.*;
+
+import com.google.gson.Gson;
+import com.tamu.entity.User;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class LoginScreen extends JFrame implements ActionListener {
     private JTextField txtUserName = new JTextField(10);
     private JPasswordField txtPassword = new JPasswordField(10);
     private JButton btnLogin = new JButton("Login");
-    private JButton btnRegister = new JButton("Register"); // New Register button
+    private JButton btnRegister = new JButton("Register");
+    Gson gson = new Gson();
 
     public JButton getBtnLogin() {
         return btnLogin;
@@ -56,10 +62,26 @@ public class LoginScreen extends JFrame implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnLogin) {
-            // Existing login logic
-            // ...
+        	User user = new User();
+        	user.setUsername(txtUserName.getText().trim());
+    		user.setPassword(txtPassword.getText().trim());
+    		String userBody = gson.toJson(user);
+    		try {
+    		    User loggedInUser = Application.getInstance().getDataAdapter().login(userBody);
+
+    		    if (loggedInUser.getUserId() == 0) {
+    		        JOptionPane.showMessageDialog(null, "This user does not exist!");
+    		    } else {
+    		        Application.getInstance().setCurrentUser(loggedInUser);
+    		        BookDashboardScreen bookDashboardScreen = new BookDashboardScreen();
+    		        setVisible(false);
+    		        bookDashboardScreen.setVisible(true);
+    		    }
+    		} catch (IOException ex) {
+    		    ex.printStackTrace();
+    		}
+    		
         } else if (e.getSource() == btnRegister) {
-            // Open the RegistrationScreen when the Register button is clicked
             RegistrationScreen registrationScreen = new RegistrationScreen();
             registrationScreen.setVisible(true);
             this.setVisible(false);
