@@ -1,32 +1,22 @@
 package com.tamu.dao;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import org.bson.Document;
+
 import com.google.gson.Gson;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Projections;
-import com.mongodb.client.model.ReplaceOptions;
-import com.mongodb.client.model.Sorts;
+import com.mongodb.client.result.UpdateResult;
 import com.tamu.dto.MyBookDto;
-import com.tamu.entity.Book;
 import com.tamu.entity.Subscription;
-
-import org.bson.Document;
-import org.bson.types.ObjectId;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
-import static com.mongodb.client.model.Filters.eq;
 
 public class SubscriptionDao {
 
@@ -88,6 +78,7 @@ public class SubscriptionDao {
 
 	private MyBookDto mapDocumentToMyBookDto(Subscription subscription) {
 		MyBookDto myBookDto = new MyBookDto();
+		myBookDto.setSubscriptionId((int)subscription.getSubscriptionId());
 		myBookDto.setBookId(subscription.getBook().getBookId());
 		myBookDto.setBookName(subscription.getBook().getBookName());
 		myBookDto.setBookDescription(subscription.getBook().getBookDescription());
@@ -114,4 +105,20 @@ public class SubscriptionDao {
 		}
 		return 0;
 	}
+	
+	public boolean unsubscribe (int subscriptionId) {
+		this.connect(conStr);
+		MongoDatabase database = mongoClient.getDatabase("csce606"); // Replace with your database name
+		MongoCollection<Document> subscriptionsCollection = database.getCollection("subscriptions");
+		
+		 Document filter = new Document("subscriptionId", subscriptionId);
+
+         Document update = new Document("$set", new Document("isReturned", 1));
+
+         UpdateResult result = subscriptionsCollection.updateOne(filter, update);
+         
+         return  result.getMatchedCount() == 1 && result.getModifiedCount() == 1;
+				
+	}
+
 }

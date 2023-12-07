@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.Gson;
+import com.tamu.dto.MyBookDto;
 import com.tamu.entity.Book;
 import com.tamu.entity.User;
 
@@ -24,8 +25,9 @@ public class TestAdapter {
 		User loggedinUser=null ;
 		List<Book> sampleBooks= new ArrayList<Book>();
 		String res ="";
+		List<MyBookDto> mbtres;
 		try {
-			 res  = adapter.register(body);
+			res  = adapter.unsubscribe(Integer.toString(56));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

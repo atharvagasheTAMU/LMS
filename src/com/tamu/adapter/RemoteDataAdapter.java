@@ -2,6 +2,7 @@ package com.tamu.adapter;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.tamu.dto.MyBookDto;
 import com.tamu.entity.Book;
 import com.tamu.entity.MembershipType;
 import com.tamu.entity.User;
@@ -102,7 +103,30 @@ public class RemoteDataAdapter {
 		disconnect();
 		return response;
 	}
+	
+	public List<MyBookDto> getUserSubscriptions(String userId) throws UnknownHostException, IOException {
 
+		String httpMethod = "GET";
+		String path = "/subscription/books/userId/"+ userId;
+		connect();
+		String responseBody = null;
+		try {
+		responseBody = doRESTCall(httpMethod, path, "");
+		}catch(Exception e) {
+			System.out.println("Error!!");
+		}
+		Type bookListType = new TypeToken<List<MyBookDto>>() {
+		}.getType();
+		List<MyBookDto> response = null;
+		if (responseBody != null) {
+			 response = gson.fromJson(responseBody, bookListType);
+		}
+		disconnect();
+		return response;
+	}
+	
+//	http://192.168.0.100:8080/subscription/books/userId/3001
+	
 	public List<Book> getBooks(String type, String searchString) throws UnknownHostException, IOException {
 		String httpMethod = "GET";
 		String path = "/book/search/" + type + "/" + searchString;
@@ -129,6 +153,14 @@ public class RemoteDataAdapter {
 		String responseBody = doRESTCall(httpMethod, path, requestBody);
 	    disconnect();
 	    return responseBody;
+	}
+	public String unsubscribe(String subscriptionId) throws UnknownHostException, IOException {
+		String httpMethod = "GET";
+		String path = "/subscription/unsubscribe/" + subscriptionId;
+		connect();
+		String responseBody = doRESTCall(httpMethod, path, "");
+		disconnect();
+		return responseBody;
 	}
 
 	private String doRESTCall(String httpMethod, String path, String requestBody) {
