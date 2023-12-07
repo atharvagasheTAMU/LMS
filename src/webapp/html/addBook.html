@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Librarian Dashboard</title>
+    <title>Add Book</title>
     <!-- Include Bootstrap CSS -->
     <link
       rel="stylesheet"
@@ -17,7 +17,7 @@
           <ul class="navbar">
             <li><a href="libDashboard.html">Librarian Dashboard</a></li>
             <li><a href="manageBooks">Manage Books</a></li>
-            <li><a href="logout.html">Logout</a></li>
+            <li><a href="adminLogin.html">Logout</a></li>
           </ul>
         </div>
       </nav>
@@ -96,21 +96,29 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
+      //       {
+      //     "bookName": "The Road Less Traveled",
+      //     "bookDescription": "Self-help book that explores love, growth, and spiritual development.",
+      //     "bookPrice": 14.50,
+      //     "authorName": "M. Scott Peck",
+      //     "genre": "Self-Help",
+      //     "quantity": 50
+      // }
       function addBook() {
         // Add your JavaScript logic here to handle the form submission
         // You can use AJAX to send the form data to the server
         // Example using fetch API:
-        fetch("addBook", {
+        fetch("http://localhost:8080/book/addBook", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            bookTitle: document.getElementById("bookTitle").value,
+            bookName: document.getElementById("bookTitle").value,
             authorName: document.getElementById("authorName").value,
             genre: document.getElementById("genre").value,
             bookPrice: document.getElementById("bookPrice").value,
-            bookQuantity: document.getElementById("bookQuantity").value,
+            quantity: document.getElementById("bookQuantity").value,
             bookDescription: document.getElementById("bookDescription").value,
           }),
         })
@@ -118,10 +126,8 @@
           .then((data) => {
             // Handle the response from the server
             console.log(data);
+            window.location.href = "libDashboard.html";
             // You can redirect or perform other actions based on the response
-          })
-          .catch((error) => {
-            console.error("Error:", error);
           });
       }
     </script>

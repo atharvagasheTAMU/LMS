@@ -65,12 +65,34 @@
                     `<p class="card-text"><strong>Genre:</strong> ${book.genre}</p>` +
                     `<p class="card-text"><strong>Price:</strong> $${book.bookPrice}</p>` +
                     `<p class="card-text"><strong>Quantity:</strong> ${book.quantity}</p>` +
+                    // Add a "Return" button with onclick attribute
+                    `<button class="btn btn-secondary" onclick="returnBook(${book.subscriptionId})">Return</button>` +
                     "</div></div></div>";
                   document.getElementById("booksContainer").innerHTML +=
                     cardHtml;
                 });
               }
             });
+          });
+        }
+
+        function returnBook(subscriptionId) {
+          console.log(subscriptionId);
+          fetch(
+            "http://localhost:8080/subscription/unsubscribe/" + subscriptionId,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          ).then((response) => {
+            // Handle the response or perform additional actions as needed
+            //console.log("Book returned successfully");
+            console.log(response);
+            // Optionally, you can refresh the book list after returning
+            alert("Unsubscribed Successfully");
+            location.reload();
           });
         }
       </script>

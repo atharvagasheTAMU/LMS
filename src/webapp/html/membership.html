@@ -311,6 +311,7 @@
           country: document.getElementById("country").value,
           contact: document.getElementById("contact").value,
         };
+        localStorage.setItem("address", JSON.stringify(address));
 
         var card = {
           cardNumber: document.getElementById("cardNumber").value,
@@ -319,6 +320,8 @@
           endDate: document.getElementById("endDate").value,
           cvv: document.getElementById("cvv").value,
         };
+
+        localStorage.setItem("card", JSON.stringify(card));
 
         var currentUser = JSON.parse(localStorage.getItem("currentUser"));
 

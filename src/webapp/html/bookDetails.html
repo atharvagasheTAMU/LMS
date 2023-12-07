@@ -62,7 +62,7 @@
                 </select>
               </div>
               <input type="hidden" name="bookId" id="bookId" value="" />
-              <button type="button" class="btn btn-primary" id="rentButton" onclick="handleRent()">Rent Book</button>
+              <button type="button" class="btn btn-primary" id="rentButton" onclick="handleRent()" disabled>Rent Book</button>
             </form>
             </form>
           </div>
@@ -141,6 +141,11 @@
               } 
             })
             .catch((error) => alert(error));
+        }else{
+          console.log("Hello");
+          var rentButton = document.getElementById("rentButton");
+          console.log(rentButton);
+          rentButton.disabled = true;
         }
       });
 

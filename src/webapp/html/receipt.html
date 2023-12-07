@@ -86,17 +86,28 @@
 
     <script>
       // Simulated data (replace with actual data)
-      var receiptData = {
-        membershipType: "Gold Membership",
-        billingAddressLineOne: "123 Street",
-        cardNumber: "**** **** **** 1234",
-        membershipCost: 99.99,
-        taxAmount: 9.99,
-        totalAmount: 109.98,
-      };
+      window.onload = onLoad;
+      function onLoad() {
+        var currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        var card = JSON.parse(localStorage.getItem("card"));
+        var address = JSON.parse(localStorage.getItem("address"));
+
+        var receiptData = {
+          membershipType: currentUser.membershipType.type,
+          billingAddressLineOne: address.lineOne,
+          cardNumber:
+            "**** **** **** " + String(parseInt(card.cardNumber) % 10000),
+          membershipCost: currentUser.membershipType.price,
+          taxAmount: currentUser.membershipType.price / 10,
+          totalAmount: currentUser.membershipType.price * 1.1,
+        };
+
+        // Call the function to set data
+        setData(receiptData);
+      }
 
       // Function to set data in the HTML
-      function setData() {
+      function setData(receiptData) {
         document.getElementById("membershipType").innerText =
           receiptData.membershipType;
         document.getElementById("billingAddressLineOne").innerText =
@@ -109,9 +120,6 @@
         document.getElementById("totalAmount").innerText =
           receiptData.totalAmount;
       }
-
-      // Call the function to set data
-      setData();
     </script>
   </body>
 </html>
