@@ -147,9 +147,12 @@ public class MembershipScreen extends JFrame implements ActionListener {
             dto.setCard(newCard);
             dto.setUser(user);
             Gson gson = new Gson();
-            User updatedUser = null;
+            User updatedUser = null;   
             try {
             	updatedUser = Application.getInstance().getDataAdapter().createMembership(gson.toJson(dto));
+                if (updatedUser != null) {
+                	Application.getInstance().setCurrentUser(updatedUser);
+                }
             	String receiptText = "						Membership Receipt \n \nMembership Details \nMembership Type : " + selectedMembershipType
         		+ "\n\nBilling Address \nLine 1 : " + lineOne
         		+ "\nCity : " + city
@@ -169,9 +172,7 @@ public class MembershipScreen extends JFrame implements ActionListener {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-            if (updatedUser != null) {
-            	Application.getInstance().setCurrentUser(updatedUser);
-            }
+
         }
         else if (e.getSource() == btnBack) {
             try {

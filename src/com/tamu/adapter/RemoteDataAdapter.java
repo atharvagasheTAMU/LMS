@@ -1,24 +1,20 @@
 package com.tamu.adapter;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.tamu.dto.MyBookDto;
-import com.tamu.entity.Book;
-import com.tamu.entity.MembershipType;
-import com.tamu.entity.User;
-
 import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.tamu.dto.MyBookDto;
+import com.tamu.entity.Book;
+import com.tamu.entity.MembershipType;
+import com.tamu.entity.User;
 
 public class RemoteDataAdapter {
 	Gson gson = new Gson();
@@ -125,7 +121,6 @@ public class RemoteDataAdapter {
 		return response;
 	}
 	
-//	http://192.168.0.100:8080/subscription/books/userId/3001
 	
 	public List<Book> getBooks(String type, String searchString) throws UnknownHostException, IOException {
 		String httpMethod = "GET";
@@ -166,39 +161,6 @@ public class RemoteDataAdapter {
 	private String doRESTCall(String httpMethod, String path, String requestBody) {
 		try {
 
-//			// Read the entire request body to calculate Content-Length
-//			StringBuilder requestBody = new StringBuilder();
-//			if (httpMethod.equals("POST")) {
-//
-//				Map<String, String> headers = new HashMap<>();
-//				String headerLine;
-//				while ((headerLine = inFromClient.readLine()) != null && !headerLine.isEmpty()) {
-//					String[] header = headerLine.split(": ", 2);
-//					if (header.length > 1) {
-//						headers.put(header[0], header[1]);
-//					}
-//				}
-//				String contentType = headers.get("Content-Type");
-//				String contentLengthLine = headers.get("Content-Length");
-//
-//				if (contentLengthLine != null) {
-//					int contentLength = Integer.parseInt(contentLengthLine.trim());
-//					char[] bodyChars = new char[contentLength];
-//					int bytesRead = inFromClient.read(bodyChars, 0, contentLength);
-//
-//					if (bytesRead == contentLength) {
-//						requestBody = new StringBuilder(new String(bodyChars));
-//					} else {
-//						// Handle the case where not all expected bytes are read
-//						// This could be due to a timeout or incomplete data
-//						System.err.println("Error reading request body");
-//					}
-//				}
-//
-//				String line;
-//				requestBody.append("\r\n");
-//
-//			}
 
 			microserviceWriter.println(httpMethod + " " + path + " HTTP/1.1");
 			microserviceWriter.println("Host: " + microserviceHost);
@@ -218,16 +180,13 @@ public class RemoteDataAdapter {
 				response.append(line).append("\r\n");
 			}
 
-			// Convert StringBuilder to String for easy manipulation
 			String fullResponse = response.toString();
 			String responseBody = null;
 			// Find the blank line index to separate headers and body
 			int headerBodySeparatorIndex = fullResponse.indexOf("\r\n\r\n");
 			if (headerBodySeparatorIndex != -1) {
-				// Extract body from the response
 				responseBody = fullResponse.substring(headerBodySeparatorIndex + 4); // +4 to move past the "\r\n\r\n"
 
-				// Now you can use the responseBody as needed
 				System.out.println("Response Body: " + responseBody);
 			} else {
 				System.err.println("No body found in response");

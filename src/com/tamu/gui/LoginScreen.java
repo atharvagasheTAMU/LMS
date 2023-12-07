@@ -44,9 +44,9 @@ public class LoginScreen extends JFrame implements ActionListener {
         main.add(txtPassword);
 
         SpringUtilities.makeCompactGrid(main,
-                2, 2, //rows, cols
-                6, 6,        //initX, initY
-                6, 6);       //xPad, yPad
+                2, 2, 
+                6, 6,    
+                6, 6);    
 
         this.getContentPane().add(main);
 
@@ -73,7 +73,7 @@ public class LoginScreen extends JFrame implements ActionListener {
     		        JOptionPane.showMessageDialog(null, "This user does not exist!");
     		    } else {
     		        Application.getInstance().setCurrentUser(loggedInUser);
-    		        if(loggedInUser.getUserId() == 3006) {
+    		        if(loggedInUser.getUserId() == 3000) {
     		        	AddBooksScreen addBooksScreen = new AddBooksScreen();
     		        	setVisible(false);
     		        	addBooksScreen.setVisible(true);

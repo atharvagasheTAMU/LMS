@@ -1,17 +1,24 @@
 package com.tamu.gui;
 
-import com.tamu.dto.MyBookDto;
-import com.tamu.entity.Book;
-import com.tamu.entity.Subscription;
-import com.tamu.entity.User;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.List;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
+
+import com.tamu.dto.MyBookDto;
+import com.tamu.entity.User;
 
 public class MyBooksScreen extends JFrame implements ActionListener {
 
@@ -53,7 +60,6 @@ public class MyBooksScreen extends JFrame implements ActionListener {
         User user = Application.getInstance().getCurrentUser();
         List<MyBookDto> myBooks = Application.getInstance().getDataAdapter().getUserSubscriptions(Integer.toString(user.getUserId()));
 
-        // Clear existing books
         bookListPanel.removeAll();
 
         // Create book panels for each subscribed/rented book
@@ -72,21 +78,11 @@ public class MyBooksScreen extends JFrame implements ActionListener {
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         bookPanel.add(titleLabel, BorderLayout.NORTH);
 
-        // Load the image using ImageIcon
         ImageIcon imageIcon = new ImageIcon(book.getImageURL());
         JLabel imageLabel = new JLabel(imageIcon);
         bookPanel.add(imageLabel, BorderLayout.CENTER);
 
-        // You can add more labels or components to display other details like author, price, etc.
 
-		/*
-		 * JButton detailsButton = new JButton("View Details");
-		 * detailsButton.addActionListener(new ActionListener() {
-		 * 
-		 * @Override public void actionPerformed(ActionEvent e) { BookDetailsScreen
-		 * bookDetailsScreen = new BookDetailsScreen(book); setVisible(false);
-		 * bookDetailsScreen.setVisible(true); } });
-		 */
 
         JButton returnButton = new JButton("Return");
         returnButton.addActionListener(new ActionListener() {
@@ -106,7 +102,6 @@ public class MyBooksScreen extends JFrame implements ActionListener {
         });
 
         JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
-//        buttonPanel.add(detailsButton);
         buttonPanel.add(returnButton);
 
         bookPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -115,6 +110,5 @@ public class MyBooksScreen extends JFrame implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        // Handle any additional actions if needed
     }
 }
