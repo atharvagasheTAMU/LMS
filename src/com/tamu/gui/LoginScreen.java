@@ -73,9 +73,16 @@ public class LoginScreen extends JFrame implements ActionListener {
     		        JOptionPane.showMessageDialog(null, "This user does not exist!");
     		    } else {
     		        Application.getInstance().setCurrentUser(loggedInUser);
-    		        BookDashboardScreen bookDashboardScreen = new BookDashboardScreen();
-    		        setVisible(false);
-    		        bookDashboardScreen.setVisible(true);
+    		        if(loggedInUser.getUserId() == 3006) {
+    		        	AddBooksScreen addBooksScreen = new AddBooksScreen();
+    		        	setVisible(false);
+    		        	addBooksScreen.setVisible(true);
+    		        }
+    		        else {
+    		        	BookDashboardScreen bookDashboardScreen = new BookDashboardScreen();
+        		        setVisible(false);
+        		        bookDashboardScreen.setVisible(true);
+    		        }
     		    }
     		} catch (IOException ex) {
     		    ex.printStackTrace();

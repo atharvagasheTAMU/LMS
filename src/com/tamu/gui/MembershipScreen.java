@@ -43,12 +43,6 @@ public class MembershipScreen extends JFrame implements ActionListener {
     public MembershipScreen() {
     	
         this.memberships = Application.getInstance().getDataAdapter().retrieveMemberships();
-
-//        SET membership_type:1 '{"membershipTypeId": 1, "type": "Silver Membership", "numBooks": 3, "validity": 30, "price": 10.99}'
-//
-//        SET membership_type:2 '{"membershipTypeId": 2, "type": "Gold Membership", "numBooks": 3, "validity": 90, "price": 28.99}'
-//
-//        SET membership_type:3 '{"membershipTypeId": 3, "type": "Platinum Membership", "numBooks": 4, "validity": 365, "price": 99.99}'
         
         this.setTitle("Membership Selection");
         this.setSize(600, 500);
@@ -156,6 +150,21 @@ public class MembershipScreen extends JFrame implements ActionListener {
             User updatedUser = null;
             try {
             	updatedUser = Application.getInstance().getDataAdapter().createMembership(gson.toJson(dto));
+            	String receiptText = "						Membership Receipt \n \nMembership Details \nMembership Type : " + selectedMembershipType
+        		+ "\n\nBilling Address \nLine 1 : " + lineOne
+        		+ "\nCity : " + city
+        		+ "\nState : " + state
+        		+ "\nZip : " + zip
+        		+ "\nContact : " + contact
+        		+ "\n\nCard Details \nCard Number : " + cardNumber
+        		+ "\nCard Name : " + cardName
+            	+ "\n\nCard Details \nMembership Cost : $" + selectedMembership.getPrice()
+            	+ "\nTax% : " + "$8.5"
+            	+ "\nTotal Amount : $" + selectedMembership.getPrice()* 1.085;
+            	JOptionPane.showMessageDialog(this, "Membership Created Successfully! \n" + receiptText);
+            	BookDashboardScreen bookDashboardScreen = new BookDashboardScreen();
+                setVisible(false);
+                bookDashboardScreen.setVisible(true);
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -184,14 +193,7 @@ public class MembershipScreen extends JFrame implements ActionListener {
         }
         return null; // Handle appropriately if not found
     }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            List<MembershipType> memberships = Application.getInstance().getDataAdapter().retrieveMemberships();
-            MembershipScreen membershipScreen = new MembershipScreen();
-            membershipScreen.setVisible(true);
-        });
-    }
+    
     public static Date parseDate(String dateString) {
         SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
         try {

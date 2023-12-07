@@ -23,7 +23,7 @@ public class BookDetailsScreen extends JFrame implements ActionListener {
     private JLabel lblQuantity = new JLabel();
     private JButton btnBack = new JButton("Back to Dashboard");
     private JButton btnRent = new JButton("Rent");
-   private Book book;
+    private Book book;
     public BookDetailsScreen(Book book) {
     	this.book = book;
         this.setTitle("Book Details");
@@ -47,7 +47,14 @@ public class BookDetailsScreen extends JFrame implements ActionListener {
 
         btnBack.addActionListener(this);
         this.getContentPane().add(btnRent);
-        btnRent.addActionListener(this);
+        updateRentButton();    
+        btnRent.addActionListener(this);    
+    }
+    
+    private void updateRentButton() {
+        boolean userHasMembership = Application.getInstance().getCurrentUser().getMembershipId() == 0;
+        btnRent.setVisible(!userHasMembership);
+        btnRent.setEnabled(!userHasMembership);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -97,14 +104,14 @@ public class BookDetailsScreen extends JFrame implements ActionListener {
             String response = Application.getInstance().getDataAdapter().subscribe(gson.toJson(newSubscription));
 
             // Check the response and show a dialog accordingly
-            if ("Subscribed Successfully".equals(response)) {
+            if (response.startsWith("Subscribed Successfully")) {
                 JOptionPane.showMessageDialog(this, "Book Subscribed Successfully");
                 // Redirect to BookDashboardScreen
                 BookDashboardScreen bookDashboardScreen = new BookDashboardScreen();
                 setVisible(false);
                 bookDashboardScreen.setVisible(true);
             } else {
-                JOptionPane.showMessageDialog(this, "Error Subscribing: " + response, "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Error Subscribing: Failed", "Error", JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception ex) {
             ex.printStackTrace();

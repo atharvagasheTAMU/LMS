@@ -29,6 +29,10 @@ public class BookDashboardScreen extends JFrame implements ActionListener {
         this.setTitle("Book Dashboard");
         this.setLayout(new BorderLayout());
         this.setSize(800, 600);
+        JPanel panelTopButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton btnHome = new JButton("Home");
+        JButton btnMyBooks = new JButton("My Books");
+        JButton btnLogOut = new JButton("Log Out");
 
         sampleBooks = Application.getInstance().getDataAdapter().getBooks();
 
@@ -50,15 +54,61 @@ public class BookDashboardScreen extends JFrame implements ActionListener {
         btnGetMembership.addActionListener(this);
         updateMembershipButton();
 
-        // Combine search and button panels
-        JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.add(panelSearch, BorderLayout.NORTH);
-        topPanel.add(panelButtons, BorderLayout.CENTER);
-
         // Panel for book display
         panelBooks = new JPanel(new GridLayout(2, 3, 10, 10));
         updateBookPanel();
         JScrollPane scrollPane = new JScrollPane(panelBooks);
+
+        btnHome.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Redirect to BookDashboardScreen
+                try {
+                    BookDashboardScreen bookDashboardScreen = new BookDashboardScreen();
+                    setVisible(false);
+                    bookDashboardScreen.setVisible(true);
+                } catch (UnknownHostException ex) {
+                    ex.printStackTrace();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        panelTopButtons.add(btnHome, BorderLayout.WEST);
+
+        btnMyBooks.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Redirect to MyBooksScreen
+                MyBooksScreen myBooksScreen;
+				try {
+					myBooksScreen = new MyBooksScreen();
+	                setVisible(false);
+	                myBooksScreen.setVisible(true);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+            }
+        });
+        panelTopButtons.add(btnMyBooks, BorderLayout.CENTER);
+
+        btnLogOut.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Redirect to LogInScreen
+                LoginScreen logInScreen = new LoginScreen();
+                setVisible(false);
+                logInScreen.setVisible(true);
+            }
+        });
+        panelTopButtons.add(btnLogOut, BorderLayout.EAST);
+
+        // Combine search, button, and top button panels
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.add(panelTopButtons, BorderLayout.NORTH);
+        topPanel.add(panelSearch, BorderLayout.CENTER);
+        topPanel.add(panelButtons, BorderLayout.SOUTH);
 
         // Combine all panels in the main layout
         this.add(topPanel, BorderLayout.NORTH);
