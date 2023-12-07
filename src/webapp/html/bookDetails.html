@@ -80,6 +80,8 @@
     <!-- Your custom JavaScript -->
     <script>
       // Simulated data (replace with actual data)
+      var theBook;
+      var currentUser = JSON.parse(localStorage.getItem("currentUser"));
       document.addEventListener("DOMContentLoaded", function () {
         // Function to extract a parameter from the URL
         function getParameterByName(name, url) {
@@ -98,12 +100,12 @@
         //alert("Book ID: " + bookId);
 
         // load book data from bookId.
-        fetch("http://127.0.0.1:8080/book/search/bookName/" + bookName, {
+        fetch("http://localhost:8080/book/search/bookName/" + bookName, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
-        })
+          })
           .then((response) => response.json())
           .then((data) => {
             var bookData = {
@@ -113,9 +115,33 @@
               bookDescription: data[0].bookDescription,
               bookPrice: data[0].bookPrice,
             };
+            theBook = data[0];
             setData(bookData);
           })
           .catch((error) => alert(error));
+
+        console.log(currentUser);
+
+        if(currentUser.membershipType != null){
+
+          fetch("http://localhost:8080/subscription/userId/" + String(currentUser.userId), {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log(data);
+              var rentButton = document.getElementById("rentButton");
+
+              // Check the condition and disable the button accordingly
+              if (data > currentUser.membershipType.numBooks - 1) {
+                rentButton.disabled = true;
+              } 
+            })
+            .catch((error) => alert(error));
+        }
       });
 
       // Function to set data in the HTML
@@ -131,16 +157,43 @@
         document.getElementById("bookId").value = bookData.bookId; // Replace with the actual book ID
       }
 
-  function handleRent() {
-    // Get form data
-    var rentDays = document.getElementById("rentDays").value;
-    var bookId = document.getElementById("bookId").value;
+      function handleRent() {
+        // Get form data
+        var rentDays = document.getElementById("rentDays").value;
+        var bookId = document.getElementById("bookId").value;
+        var due_date = "2023-12-"+String(1+parseInt(rentDays));
+        console.log(theBook);
+        var api_object = {
+          "subscriptionId" : getRandomInt(100, 200),
+          "book": theBook,
+          "user": currentUser,
+          "orderDate": "2023-12-01",
+          "dueDate": due_date,
+          "isReturned": 0
+        }
 
-    // Perform any additional processing if needed
+        console.log(api_object);
 
-    // Redirect to another HTML file with parameters
-    window.location.href = "anotherPage.html?rentDays=" + rentDays + "&bookId=" + bookId;
-  }
+        fetch("http://localhost:8080/subscription/subscribe", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // Add any other headers as needed
+          },
+          body: JSON.stringify(api_object),
+        }).then((response) => {
+          response.json().then(data => console.log(data));
+          window.location.href = "myBooks.html";
+        });
+
+      // window.location.href = "anotherPage.html?rentDays=" + rentDays + "&bookId=" + bookId;
+      }
+
+      function getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min) + min);
+      }
 
     </script>
   </body>

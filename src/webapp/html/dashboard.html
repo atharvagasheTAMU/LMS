@@ -124,7 +124,7 @@
           membershipButton.disabled = true;
         }
 
-        fetch("http://127.0.0.1:8080/book/search/all", {
+        fetch("http://localhost:8080/book/search/all", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -188,11 +188,11 @@
         var apiEndpoint;
         if (searchType === "book_name") {
           apiEndpoint =
-            "http://127.0.0.1:8080/book/search/bookName/" +
+            "http://localhost:8080/book/search/bookName/" +
             encodeURIComponent(searchString);
         } else if (searchType === "author_id") {
           apiEndpoint =
-            "http://127.0.0.1:8080/book/search/authorName/" +
+            "http://localhost:8080/book/search/authorName/" +
             encodeURIComponent(searchString);
         }
         // Fetch books based on the constructed API endpoint
